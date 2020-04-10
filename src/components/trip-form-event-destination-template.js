@@ -1,18 +1,23 @@
-export const createTripFormEventDestinationTemplate = () => {
+import {descriptions, photos} from "../const";
+
+const createPhotosMarkup = (photo) => {
+  return (
+    `<img class="event__photo" src="${photo}" alt="Event photo">`
+  );
+};
+
+export const createTripFormEventDestinationTemplate = (description = descriptions, photo = photos) => {
+  const photosMarkup = photo.map((it) => createPhotosMarkup(it)).join(`\n`);
+  const descriptionMarkup = description.map((it) => it).join(` `);
   return (
     `<section class="event__section  event__section--destination">
-        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
-
-        <div class="event__photos-container">
-          <div class="event__photos-tape">
-            <img class="event__photo" src="img/photos/1.jpg" alt="Event photo">
-            <img class="event__photo" src="img/photos/2.jpg" alt="Event photo">
-            <img class="event__photo" src="img/photos/3.jpg" alt="Event photo">
-            <img class="event__photo" src="img/photos/4.jpg" alt="Event photo">
-            <img class="event__photo" src="img/photos/5.jpg" alt="Event photo">
-          </div>
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${descriptionMarkup}</p>
+      <div class="event__photos-container">
+        <div class="event__photos-tape">
+          ${photosMarkup}
         </div>
+      </div>
     </section>`
   );
 };
