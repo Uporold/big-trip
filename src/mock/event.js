@@ -1,17 +1,6 @@
 import {generateSelectors} from "./selector";
 import {photos, descriptions, typeItems, cityItems} from "../const";
-import {shuffleArray} from "../utils";
-
-
-const getRandomArrayItem = (array) => {
-  const randomIndex = getRandomIntegerNumber(0, array.length);
-
-  return array[randomIndex];
-};
-
-const getRandomIntegerNumber = (min, max) => {
-  return min + Math.floor(Math.random() * (max - min));
-};
+import {shuffleArray, getRandomIntegerNumber, getRandomArrayItem} from "../utils";
 
 const getRandomDate = (date) => {
   const targetDate = new Date(date);
@@ -36,7 +25,8 @@ const generateEvent = () => {
     },
     startDate,
     endDate: getRandomDate(startDate),
-    price: getRandomIntegerNumber(10, 1000)
+    price: getRandomIntegerNumber(10, 1000),
+    isFavorite: Math.random() > 0.5
   };
 };
 

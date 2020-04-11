@@ -12,7 +12,7 @@ const createTypeMarkup = (type) => {
   );
 };
 
-export const createTripFormTemplate = (type, array = generateSelectors(), startTime, endTime, photo, description, price, city) => {
+export const createTripFormTemplate = (type, array = generateSelectors(), startTime, endTime, photo, description, price, city, isFavorite) => {
   const transferMarkup = typeItemsTransfer.map((it) => createTypeMarkup(it)).join(`\n`);
   const activityMarkup = typeItemsActivity.map((it) => createTypeMarkup(it)).join(`\n`);
   return (
@@ -71,6 +71,18 @@ export const createTripFormTemplate = (type, array = generateSelectors(), startT
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Cancel</button>
+          ${type ?
+      `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `Checked` : ``}>
+          <label class="event__favorite-btn" for="event-favorite-1">
+            <span class="visually-hidden">Add to favorite</span>
+            <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+              <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"></path>
+            </svg>
+          </label>`
+      : ``}
+          <button class="event__rollup-btn" type="button">
+             <span class="visually-hidden">Open event</span>
+          </button>
         </header>
         ${!type || (photo || description) ?
       `<section class="event__details">

@@ -28,7 +28,7 @@ export const formatTimeDiff = (timeDiff) => {
   const days = Math.round((time - minutes) / 1440);
   const hours = Math.round((time - minutes) / 60 - days * 24);
 
-  return `${days > 0 ? days + `D` : ``} ${hours > 0 ? hours + `H` : ``} ${minutes}M`;
+  return `${days > 0 ? days + `D` : ``} ${hours > 0 ? hours + `H` : ``} ${minutes > 0 ? minutes + `M` : ``}`;
 };
 
 export const getTotalPrice = (array) => {
@@ -51,3 +51,14 @@ export const getTrail = (array) => {
   }
   return cities.join(` — `);
 };
+
+export const getRandomArrayItem = (array) => {
+  const randomIndex = getRandomIntegerNumber(0, array.length);
+
+  return array[randomIndex];
+};
+
+export const getRandomIntegerNumber = (min, max) => {
+  return min + Math.floor(Math.random() * (max - min));
+};
+

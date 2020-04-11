@@ -1,5 +1,6 @@
 import {createTripFormTemplate} from "./trip-form-template";
 import {formatTime, formatTimeDiff} from "../utils";
+import {typeItemsActivity} from "../const";
 
 export const createTripEventOffersMarkup = (name, price) => {
   return (
@@ -11,8 +12,9 @@ export const createTripEventOffersMarkup = (name, price) => {
   );
 };
 
+
 export const createTripEventTemplate = (event, editFlag = false) => {
-  const {type, city, offers, startDate, endDate, info, price} = event;
+  const {type, city, offers, startDate, endDate, info, price, isFavorite} = event;
   const photo = info.photo;
   const description = info.description;
   const startTime = formatTime(startDate);
@@ -20,7 +22,8 @@ export const createTripEventTemplate = (event, editFlag = false) => {
   const startTimeForm = formatTime(startDate, true);
   const endTimeForm = formatTime(endDate, true);
   const timeDiff = endDate - startDate;
-  const offersMarkup = offers.map((it) => createTripEventOffersMarkup(it.title, it.price)).join(`\n`);
+  const offersMarkup = offers.map((it) => createTripEventOffersMarkup(it.title, it.price)).slice(0, 3).join(`\n`);
+  const isTypeActivity = typeItemsActivity.some((it) => type === it) ? `in` : `to`;
 
   return (
     !editFlag ?
@@ -29,7 +32,7 @@ export const createTripEventTemplate = (event, editFlag = false) => {
            <div class="event__type">
              <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
            </div>
-           <h3 class="event__title">${type} ${type === `Check-in` || type === `Sightseeing` || type === `Restaurant` ? `in` : `to`} ${city}</h3>
+           <h3 class="event__title">${type} ${isTypeActivity} ${city}</h3>
 
            <div class="event__schedule">
              <p class="event__time">
@@ -54,7 +57,7 @@ export const createTripEventTemplate = (event, editFlag = false) => {
            </button>
          </div>
     </li>` :
-      createTripFormTemplate(type, offers, startTimeForm, endTimeForm, photo, description, price, city)
+      createTripFormTemplate(type, offers, startTimeForm, endTimeForm, photo, description, price, city, isFavorite)
   );
 };
 
