@@ -14,7 +14,7 @@ import {getTotalPrice, getTrail} from "./utils";
 const EVENTS_COUNT = 20;
 const DAYS_COUNT = 3;
 
-const events = generateEvents(EVENTS_COUNT);
+const events = generateEvents(EVENTS_COUNT).slice().sort((a, b) => a.startDate.getDate() - b.startDate.getDate());
 const days = generateDaysCounts(DAYS_COUNT);
 const totalPrice = getTotalPrice(events);
 
@@ -23,7 +23,7 @@ const render = (container, template, place = `beforeend`) => {
 };
 
 const tripMainElement = document.querySelector(`.trip-main`);
-render(tripMainElement, createTripInfoTemplate(getTrail(events)), `afterbegin`);
+render(tripMainElement, createTripInfoTemplate(getTrail(events), days), `afterbegin`);
 
 const tripMainInfoElement = document.querySelector(`.trip-main__trip-info`);
 render(tripMainInfoElement, createTripPriceTemplate(totalPrice));
@@ -45,6 +45,7 @@ render(tripDaysElement, createTripDaysItemTemplate(days));
 const tripEventsList = document.querySelectorAll(`.trip-events__list`);
 
 render(tripEventsList[0], createTripEventTemplate(events[0], true));
+
 for (let j = 0; j < tripEventsList.length; j++) {
   for (let i = 1; i < events.length; i++) {
     render(tripEventsList[j], createTripEventTemplate(events[i]));

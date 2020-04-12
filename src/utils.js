@@ -44,12 +44,8 @@ export const getTotalPrice = (array) => {
   return mainPriceSum + offersPriceSum;
 };
 
-export const getTrail = (array) => {
-  let cities = [];
-  for (let checkpoint of array) {
-    cities.push(checkpoint.city);
-  }
-  return cities.join(` — `);
+export const getTrail = (events) => {
+  return events.length <= 3 ? events.map((event) => event.city).join(` — `) : `${events[0].city} — ... — ${events[events.length - 1].city}`;
 };
 
 export const getRandomArrayItem = (array) => {

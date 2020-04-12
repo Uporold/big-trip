@@ -85,3 +85,9 @@ export const months = [
   `NOV`,
   `DEC`
 ];
+
+export const tripFilters = [
+  `Everything`,
+  `Future`,
+  `Past`
+];

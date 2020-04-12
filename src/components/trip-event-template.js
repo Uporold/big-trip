@@ -36,7 +36,7 @@ export const createTripEventTemplate = (event, editFlag = false) => {
 
            <div class="event__schedule">
              <p class="event__time">
-               <time class="event__start-time" datetime="2019-03-18T10:30">${startTime}</time>
+               <time class="event__start-time" datetime="2019-03-18T11:00">${startTime}</time>
                &mdash;
                <time class="event__end-time" datetime="2019-03-18T11:00">${endTime}</time>
              </p>
