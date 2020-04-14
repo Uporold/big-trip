@@ -1,4 +1,5 @@
 import {tripFilters} from "../const";
+import {createElement} from "../utils";
 
 const createTripFilterMarkup = (filter, index) => {
   return (
@@ -9,7 +10,7 @@ const createTripFilterMarkup = (filter, index) => {
   );
 };
 
-export const createTripFiltersTemplate = () => {
+const createTripFiltersTemplate = () => {
   const filterMarkup = tripFilters.map((it, index) => createTripFilterMarkup(it, index)).join(`\n`);
   return (
     `<form class="trip-filters" action="#" method="get">
@@ -18,3 +19,25 @@ export const createTripFiltersTemplate = () => {
      </form>`
   );
 };
+
+export default class Filters {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripFiltersTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

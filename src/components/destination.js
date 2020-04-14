@@ -1,4 +1,5 @@
 import {descriptions, photos} from "../const";
+import {createElement} from "../utils";
 
 const createPhotosMarkup = (photo) => {
   return (
@@ -6,7 +7,7 @@ const createPhotosMarkup = (photo) => {
   );
 };
 
-export const createTripFormEventDestinationTemplate = (description = descriptions, photo = photos) => {
+const createTripFormEventDestinationTemplate = (description = descriptions, photo = photos) => {
   const photosMarkup = photo.map((it) => createPhotosMarkup(it)).join(`\n`);
   const descriptionMarkup = description.map((it) => it).join(` `);
   return (
@@ -21,3 +22,27 @@ export const createTripFormEventDestinationTemplate = (description = description
     </section>`
   );
 };
+
+export default class Destination {
+  constructor(description = descriptions, photo = photos) {
+    this._description = description;
+    this._photo = photo;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripFormEventDestinationTemplate(this._description, this._photo);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

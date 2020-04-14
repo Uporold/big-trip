@@ -1,5 +1,4 @@
-import {createTripFormTemplate} from "./trip-form-template";
-import {formatTime, formatTimeDiff} from "../utils";
+import {formatTime, formatTimeDiff, createElement} from "../utils";
 import {typeItemsActivity} from "../const";
 
 export const createTripEventOffersMarkup = (name, price) => {
@@ -13,21 +12,16 @@ export const createTripEventOffersMarkup = (name, price) => {
 };
 
 
-export const createTripEventTemplate = (event, editFlag = false) => {
-  const {type, city, offers, startDate, endDate, info, price, isFavorite} = event;
-  const photo = info.photo;
-  const description = info.description;
+const createTripEventTemplate = (event) => {
+  const {type, city, offers, startDate, endDate, price} = event;
   const startTime = formatTime(startDate);
   const endTime = formatTime(endDate);
-  const startTimeForm = formatTime(startDate, true);
-  const endTimeForm = formatTime(endDate, true);
   const timeDiff = endDate - startDate;
   const offersMarkup = offers.map((it) => createTripEventOffersMarkup(it.title, it.price)).slice(0, 3).join(`\n`);
   const isTypeActivity = typeItemsActivity.some((it) => type === it) ? `in` : `to`;
 
   return (
-    !editFlag ?
-      `<li class="trip-events__item">
+    `<li class="trip-events__item">
          <div class="event">
            <div class="event__type">
              <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
@@ -56,9 +50,31 @@ export const createTripEventTemplate = (event, editFlag = false) => {
              <span class="visually-hidden">Open event</span>
            </button>
          </div>
-    </li>` :
-      createTripFormTemplate(type, offers, startTimeForm, endTimeForm, photo, description, price, city, isFavorite)
+    </li>`
   );
 };
+
+export default class Event {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEventTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
 
 

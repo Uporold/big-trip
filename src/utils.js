@@ -1,3 +1,11 @@
+import {months} from "./const";
+
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`,
+  AFTEREND: `afterend`
+};
+
 export const shuffleArray = function (array) {
   for (let i = array.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
@@ -13,13 +21,13 @@ const castTimeFormat = (value) => {
 };
 
 export const formatTime = (date, forForm = false) => {
-  const years = castTimeFormat(date.getUTCFullYear()) % 2000;
-  const months = castTimeFormat(date.getMonth());
-  const days = castTimeFormat(date.getDate());
-  const hours = castTimeFormat(date.getHours() % 12);
-  const minutes = castTimeFormat(date.getMinutes());
+  const year = castTimeFormat(date.getUTCFullYear()) % 2000;
+  const month = castTimeFormat(date.getMonth());
+  const day = castTimeFormat(date.getDate());
+  const hour = castTimeFormat(date.getHours() % 12);
+  const minute = castTimeFormat(date.getMinutes());
 
-  return forForm ? `${days}/${months}/${years} ${hours}:${minutes}` : `${hours}:${minutes}`;
+  return forForm ? `${day}/${month}/${year} ${hour}:${minute}` : `${hour}:${minute}`;
 };
 
 export const formatTimeDiff = (timeDiff) => {
@@ -58,3 +66,49 @@ export const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max - min));
 };
 
+export const getNoRepeatingDates = (events) => {
+  let arr = [];
+  for (let k = 0; k < events.length; k++) {
+    let day = events[k].startDate.getDate();
+    let monthId = events[k].startDate.getMonth();
+    let month = months[monthId];
+    arr.push({day, month});
+  }
+
+  return arr.reduce((acc, current) => {
+    const x = acc.find((item) => item.day === current.day);
+    if (!x) {
+      return acc.concat([current]);
+    } else {
+      return acc;
+    }
+  }, []);
+};
+
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstChild;
+};
+
+export const createElements = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement;
+};
+
+export const render = (container, element, place = RenderPosition.BEFOREEND) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+    case RenderPosition.AFTEREND:
+      container.after(element);
+      break;
+  }
+};

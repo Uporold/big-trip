@@ -1,7 +1,7 @@
 import {typeItemsActivity, typeItemsTransfer} from "../const";
-import {createTripFormEventOffersTemplate} from "./trip-form-event-offers-template";
-import {generateSelectors} from "../mock/selector";
-import {createTripFormEventDestinationTemplate} from "./trip-form-event-destination-template";
+import Offers from "./offers";
+import Destination from "./destination";
+import {createElement, formatTime} from "../utils";
 
 const createTypeMarkup = (type) => {
   return (
@@ -12,11 +12,16 @@ const createTypeMarkup = (type) => {
   );
 };
 
-export const createTripFormTemplate = (type, array = generateSelectors(), startTime, endTime, photo, description, price, city, isFavorite) => {
+const createTripFormTemplate = (event) => {
+  const {type, city, offers, startDate, endDate, info, price, isFavorite} = event;
+  const startTimeForm = formatTime(startDate, true);
+  const endTimeForm = formatTime(endDate, true);
+  const photo = info.photo;
+  const description = info.description;
   const transferMarkup = typeItemsTransfer.map((it) => createTypeMarkup(it)).join(`\n`);
   const activityMarkup = typeItemsActivity.map((it) => createTypeMarkup(it)).join(`\n`);
   return (
-    `<form class="trip-events__item  event  event--edit" action="#" method="post">
+    `<form class="trip-events__item  event  event--edit" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -53,12 +58,12 @@ export const createTripFormTemplate = (type, array = generateSelectors(), startT
             <label class="visually-hidden" for="event-start-time-1">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTime ? startTime : `18/03/19 00:00`}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTimeForm ? startTimeForm : `18/03/19 00:00`}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endTime ? endTime : `18/03/19 00:00`}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endTimeForm ? endTimeForm : `18/03/19 00:00`}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -86,12 +91,35 @@ export const createTripFormTemplate = (type, array = generateSelectors(), startT
         </header>
         ${!type || (photo || description) ?
       `<section class="event__details">
-        ${createTripFormEventOffersTemplate(array)}
-        ${createTripFormEventDestinationTemplate(description, photo)}
+        ${new Offers(offers).getTemplate()}
+        ${new Destination(description, photo).getTemplate()}
        </section>`
       : ``}
     </form>`
   );
 };
+
+export default class TripForm {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripFormTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
 
 

@@ -1,7 +1,9 @@
+import {createElement} from "../utils";
+
 const createOfferSelectorMarkup = (name, price, title) => {
   return (
     ` <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-1" type="checkbox" name="event-offer-${name}">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-1" type="checkbox" name="event-offer-${name}" ${name ? `checked` : ``}>
         <label class="event__offer-label" for="event-offer-${name}-1">
           <span class="event__offer-title">${title}</span>
           &plus;
@@ -11,7 +13,7 @@ const createOfferSelectorMarkup = (name, price, title) => {
   );
 };
 
-export const createTripFormEventOffersTemplate = (selectors) => {
+const createTripFormEventOffersTemplate = (selectors) => {
   const selectorMarkup = selectors.map((it) => createOfferSelectorMarkup(it.name, it.price, it.title)).join(`\n`);
   return (
     `<section class="event__section  event__section--offers">
@@ -23,3 +25,24 @@ export const createTripFormEventOffersTemplate = (selectors) => {
   );
 };
 
+export default class Offers {
+  constructor(selectors) {
+    this._selectors = selectors;
+  }
+
+  getTemplate() {
+    return createTripFormEventOffersTemplate(this._selectors);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

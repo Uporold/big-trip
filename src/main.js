@@ -1,55 +1,101 @@
-import {createTripInfoTemplate} from "./components/trip-info-template";
-import {createTripPriceTemplate} from "./components/trip-price-template";
-import {createTripControlsNavTemplate} from "./components/trip-controls-nav-template";
-import {createTripFiltersTemplate} from "./components/trip-filters-template";
-import {createTripSortingTemplate} from "./components/trip-sorting-template";
-// import {createTripFormTemplate} from "./components/trip-form-template";
-import {createTripDaysContainerTemplate} from "./components/trip-days-container-template";
-import {createTripDaysItemTemplate} from "./components/trip-days-item-template";
-import {createTripEventTemplate} from "./components/trip-event-template";
+import TrailComponent from "./components/trip-info";
+import TotalPriceComponent from "./components/total-price";
+import TripControlsComponent from "./components/controls";
+import FiltersComponent from "./components/filters";
+import SortingComponent from "./components/trip-sorting";
+import TripDaysContainerComponent from "./components/days-container";
+import DaysItemComponent from "./components/days-item";
+import EventComponent from "./components/event";
+import TripFormComponent from "./components/form";
+import NoEventsComponent from "./components/no-events";
 import {generateEvents} from "./mock/event";
-import {generateDaysCounts} from "./mock/days-count";
-import {getTotalPrice, getTrail} from "./utils";
+import {getTotalPrice, getTrail, getNoRepeatingDates, render, RenderPosition} from "./utils";
+
 
 const EVENTS_COUNT = 20;
-const DAYS_COUNT = 3;
 
 const events = generateEvents(EVENTS_COUNT).slice().sort((a, b) => a.startDate.getDate() - b.startDate.getDate());
-const days = generateDaysCounts(DAYS_COUNT);
 const totalPrice = getTotalPrice(events);
 
-const render = (container, template, place = `beforeend`) => {
-  container.insertAdjacentHTML(place, template);
-};
 
 const tripMainElement = document.querySelector(`.trip-main`);
-render(tripMainElement, createTripInfoTemplate(getTrail(events), days), `afterbegin`);
+render(tripMainElement, new TrailComponent(getTrail(events), getNoRepeatingDates(events)).getElement(), RenderPosition.AFTERBEGIN);
 
 const tripMainInfoElement = document.querySelector(`.trip-main__trip-info`);
-render(tripMainInfoElement, createTripPriceTemplate(totalPrice));
+render(tripMainInfoElement, new TotalPriceComponent(totalPrice).getElement());
+
 
 const tripMainControlsElement = document.querySelector(`.trip-main__trip-controls`);
 const tripMainControlsHeader = tripMainControlsElement.querySelector(`.visually-hidden`);
+render(tripMainControlsHeader, new TripControlsComponent().getElement(), RenderPosition.AFTEREND);
+render(tripMainControlsElement, new FiltersComponent().getElement());
 
-render(tripMainControlsHeader, createTripControlsNavTemplate(), `afterEnd`);
-render(tripMainControlsElement, createTripFiltersTemplate());
+
+const renderEvent = (eventListElement, event) => {
+  const replaceEventToEdit = () => {
+    eventListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+  };
+
+  const replaceEditToEvent = () => {
+    eventListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+  };
+
+  const onEscKeyDown = (evt) => {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+    if (isEscKey) {
+      replaceEditToEvent();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  const eventComponent = new EventComponent(event);
+  const editButton = eventComponent.getElement().querySelector(`.event__rollup-btn`);
+  editButton.addEventListener(`click`, () => {
+    replaceEventToEdit();
+    document.addEventListener(`keydown`, onEscKeyDown);
+  });
+
+  const eventEditComponent = new TripFormComponent(event);
+  const editForm = eventEditComponent.getElement();
+  editForm.addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    replaceEditToEvent();
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  });
+
+  editForm.querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    replaceEditToEvent();
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  });
+
+  render(eventListElement, eventComponent.getElement());
+};
+
+const renderBoard = (element, allEvents) => {
+  if (!allEvents) {
+    render(element, new NoEventsComponent().getElement());
+  } else {
+    render(element, new SortingComponent().getElement());
+
+    const tripDaysContainer = new TripDaysContainerComponent();
+    render(element, tripDaysContainer.getElement());
+
+    const tripDaysElement = tripDaysContainer.getElement();
+    const daysItem = new DaysItemComponent(getNoRepeatingDates(allEvents));
+    render(tripDaysElement, daysItem.getElement());
+
+    const tripEventsList = daysItem.getElement().querySelectorAll(`.trip-events__list`);
+
+    for (let j = 0; j < tripEventsList.length; j++) {
+      for (let i = 0; i < allEvents.length; i++) {
+        if (allEvents[i].startDate.getDate() === getNoRepeatingDates(allEvents)[j].day) {
+          renderEvent(tripEventsList[j], allEvents[i]);
+        }
+      }
+    }
+  }
+};
 
 const tripEventsElement = document.querySelector(`.trip-events`);
-render(tripEventsElement, createTripSortingTemplate());
-// render(tripEventsElement, createTripFormTemplate());
-
-render(tripEventsElement, createTripDaysContainerTemplate());
-const tripDaysElement = document.querySelector(`.trip-days`);
-render(tripDaysElement, createTripDaysItemTemplate(days));
-
-const tripEventsList = document.querySelectorAll(`.trip-events__list`);
-
-render(tripEventsList[0], createTripEventTemplate(events[0], true));
-
-for (let j = 0; j < tripEventsList.length; j++) {
-  for (let i = 1; i < events.length; i++) {
-    render(tripEventsList[j], createTripEventTemplate(events[i]));
-  }
-}
-
-
+renderBoard(tripEventsElement, events);
