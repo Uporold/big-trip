@@ -1,4 +1,4 @@
-import {createElements} from "../utils";
+import {createElement} from "../utils";
 
 const createTripDayItemMarkup = (it, index) => {
   return (
@@ -31,7 +31,7 @@ export default class DaysItem {
 
   getElement() {
     if (!this._element) {
-      this._element = createElements(this.getTemplate());
+      this._element = createElement(this.getTemplate(), true);
     }
 
     return this._element;

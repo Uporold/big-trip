@@ -14,21 +14,28 @@ import {getTotalPrice, getTrail, getNoRepeatingDates, render, RenderPosition} fr
 
 const EVENTS_COUNT = 20;
 
-const events = generateEvents(EVENTS_COUNT).slice().sort((a, b) => a.startDate.getDate() - b.startDate.getDate());
+const events = generateEvents(EVENTS_COUNT).slice().sort((a, b) => a.startDate - b.startDate);
+const trail = getTrail(events);
+const trailDates = getNoRepeatingDates(events);
 const totalPrice = getTotalPrice(events);
 
 
 const tripMainElement = document.querySelector(`.trip-main`);
-render(tripMainElement, new TrailComponent(getTrail(events), getNoRepeatingDates(events)).getElement(), RenderPosition.AFTERBEGIN);
+const trailComponent = new TrailComponent(trail, trailDates);
+render(tripMainElement, trailComponent.getElement(), RenderPosition.AFTERBEGIN);
 
 const tripMainInfoElement = document.querySelector(`.trip-main__trip-info`);
-render(tripMainInfoElement, new TotalPriceComponent(totalPrice).getElement());
+const totalPriceComponent = new TotalPriceComponent(totalPrice);
+render(tripMainInfoElement, totalPriceComponent.getElement());
 
 
 const tripMainControlsElement = document.querySelector(`.trip-main__trip-controls`);
 const tripMainControlsHeader = tripMainControlsElement.querySelector(`.visually-hidden`);
-render(tripMainControlsHeader, new TripControlsComponent().getElement(), RenderPosition.AFTEREND);
-render(tripMainControlsElement, new FiltersComponent().getElement());
+const tripControlsComponent = new TripControlsComponent();
+render(tripMainControlsHeader, tripControlsComponent.getElement(), RenderPosition.AFTEREND);
+
+const filterComponent = new FiltersComponent();
+render(tripMainControlsElement, filterComponent.getElement());
 
 
 const renderEvent = (eventListElement, event) => {
@@ -73,26 +80,25 @@ const renderEvent = (eventListElement, event) => {
 };
 
 const renderBoard = (element, allEvents) => {
-  if (!allEvents) {
-    render(element, new NoEventsComponent().getElement());
+  if (!allEvents.length) {
+    const noEventsComponent = new NoEventsComponent();
+    render(element, noEventsComponent.getElement());
   } else {
-    render(element, new SortingComponent().getElement());
+    const sortingComponent = new SortingComponent();
+    render(element, sortingComponent.getElement());
 
     const tripDaysContainer = new TripDaysContainerComponent();
     render(element, tripDaysContainer.getElement());
 
     const tripDaysElement = tripDaysContainer.getElement();
-    const daysItem = new DaysItemComponent(getNoRepeatingDates(allEvents));
+    const daysItem = new DaysItemComponent(trailDates);
     render(tripDaysElement, daysItem.getElement());
 
     const tripEventsList = daysItem.getElement().querySelectorAll(`.trip-events__list`);
 
     for (let j = 0; j < tripEventsList.length; j++) {
-      for (let i = 0; i < allEvents.length; i++) {
-        if (allEvents[i].startDate.getDate() === getNoRepeatingDates(allEvents)[j].day) {
-          renderEvent(tripEventsList[j], allEvents[i]);
-        }
-      }
+      const dayEvents = allEvents.filter((event) => event.startDate.getDate() === trailDates[j].day);
+      dayEvents.forEach((event) => renderEvent(tripEventsList[j], event));
     }
   }
 };
