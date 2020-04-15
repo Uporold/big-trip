@@ -67,22 +67,9 @@ export const getRandomIntegerNumber = (min, max) => {
 };
 
 export const getNoRepeatingDates = (events) => {
-  let arr = [];
-  for (let k = 0; k < events.length; k++) {
-    let day = events[k].startDate.getDate();
-    let monthId = events[k].startDate.getMonth();
-    let month = months[monthId];
-    arr.push({day, month});
-  }
-
-  return arr.reduce((acc, current) => {
-    const x = acc.find((item) => item.day === current.day);
-    if (!x) {
-      return acc.concat([current]);
-    } else {
-      return acc;
-    }
-  }, []);
+  const set = new Set();
+  events.forEach((evt) => set.add(JSON.stringify({day: evt.startDate.getDate(), month: months[evt.startDate.getMonth()]})));
+  return Array.from(set).map((evt) => JSON.parse(evt));
 };
 
 export const createElement = (template, groupFlag = false) => {
