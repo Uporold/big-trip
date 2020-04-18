@@ -1,5 +1,5 @@
 import {descriptions, photos} from "../const";
-import {createElement} from "../utils";
+import AbstractComponent from "./abstract-component";
 
 const createPhotosMarkup = (photo) => {
   return (
@@ -23,26 +23,14 @@ const createTripFormEventDestinationTemplate = (description = descriptions, phot
   );
 };
 
-export default class Destination {
+export default class Destination extends AbstractComponent {
   constructor(description = descriptions, photo = photos) {
+    super();
     this._description = description;
     this._photo = photo;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripFormEventDestinationTemplate(this._description, this._photo);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

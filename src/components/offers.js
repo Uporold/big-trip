@@ -1,4 +1,4 @@
-import {createElement} from "../utils";
+import AbstractComponent from "./abstract-component";
 
 const createOfferSelectorMarkup = (name, price, title) => {
   return (
@@ -25,24 +25,13 @@ const createTripFormEventOffersTemplate = (selectors) => {
   );
 };
 
-export default class Offers {
+export default class Offers extends AbstractComponent {
   constructor(selectors) {
+    super();
     this._selectors = selectors;
   }
 
   getTemplate() {
     return createTripFormEventOffersTemplate(this._selectors);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

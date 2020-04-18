@@ -1,4 +1,5 @@
-import {createElement} from "../utils";
+import AbstractComponent from "./abstract-component";
+import {createElement} from "../utils/render";
 
 const createTripDayItemMarkup = (it, index) => {
   return (
@@ -19,10 +20,10 @@ const createTripDaysItemTemplate = (days) => {
   );
 };
 
-export default class DaysItem {
+export default class DaysItem extends AbstractComponent {
   constructor(days) {
+    super();
     this._days = days;
-    this._element = null;
   }
 
   getTemplate() {
@@ -37,8 +38,5 @@ export default class DaysItem {
     return this._element;
   }
 
-  removeElement() {
-    this._element = null;
-  }
 }
 

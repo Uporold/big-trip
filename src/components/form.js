@@ -1,7 +1,8 @@
 import {typeItemsActivity, typeItemsTransfer} from "../const";
 import Offers from "./offers";
 import Destination from "./destination";
-import {createElement, formatTime} from "../utils";
+import {formatTime} from "../utils/time";
+import Event from "./event";
 
 const createTypeMarkup = (type) => {
   return (
@@ -99,26 +100,17 @@ const createTripFormTemplate = (event) => {
   );
 };
 
-export default class TripForm {
+export default class TripForm extends Event {
   constructor(event) {
-    this._event = event;
-    this._element = null;
+    super(event);
   }
 
   getTemplate() {
     return createTripFormTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setSubmitHandler(handler) {
+    this.getElement().addEventListener(`submit`, handler);
   }
 }
 
