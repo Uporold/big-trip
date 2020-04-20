@@ -1,11 +1,10 @@
 import {generateSelectors} from "./selector";
 import {photos, descriptions, typeItems, cityItems} from "../const";
-import {shuffleArray, getRandomIntegerNumber, getRandomArrayItem} from "../utils";
+import {shuffleArray, getRandomIntegerNumber, getRandomArrayItem} from "../utils/randomize";
 
 const getRandomDate = (date) => {
   const targetDate = new Date(date);
-  const sign = Math.random() > 0.5 ? 1 : -1;
-  const diffDays = sign * getRandomIntegerNumber(0, 2);
+  const diffDays = getRandomIntegerNumber(0, 2);
   const diffMinutes = getRandomIntegerNumber(0, 90);
 
   targetDate.setDate(targetDate.getDate() + diffDays);
