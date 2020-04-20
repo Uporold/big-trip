@@ -3,7 +3,7 @@ import TotalPriceComponent from "./components/total-price";
 import TripControlsComponent from "./components/controls";
 import FiltersComponent from "./components/filters";
 import {generateEvents} from "./mock/event";
-import {getTotalPrice, getTrail} from "./utils";
+import {getTotalPrice, getTrail} from "./utils/trail-info";
 import {getNoRepeatingDates} from "./utils/time";
 import {render, RenderPosition} from "./utils/render";
 import TripController from "./controllers/trip";

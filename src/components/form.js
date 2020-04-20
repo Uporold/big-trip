@@ -4,10 +4,10 @@ import Destination from "./destination";
 import {formatTime} from "../utils/time";
 import Event from "./event";
 
-const createTypeMarkup = (type) => {
+const createTypeMarkup = (type, eventType) => {
   return (
     `<div class="event__type-item">
-      <input id="event-type-${type.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type.toLowerCase()}">
+      <input id="event-type-${type.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type.toLowerCase()}" ${type === eventType ? `checked` : ``}>
       <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type.toLowerCase()}-1">${type}</label>
     </div>`
   );
@@ -19,8 +19,8 @@ const createTripFormTemplate = (event) => {
   const endTimeForm = formatTime(endDate, true);
   const photo = info.photo;
   const description = info.description;
-  const transferMarkup = typeItemsTransfer.map((it) => createTypeMarkup(it)).join(`\n`);
-  const activityMarkup = typeItemsActivity.map((it) => createTypeMarkup(it)).join(`\n`);
+  const transferMarkup = typeItemsTransfer.map((it) => createTypeMarkup(it, type)).join(`\n`);
+  const activityMarkup = typeItemsActivity.map((it) => createTypeMarkup(it, type)).join(`\n`);
   return (
     `<form class="trip-events__item  event  event--edit" method="post">
         <header class="event__header">
