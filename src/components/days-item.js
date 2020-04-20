@@ -15,17 +15,7 @@ const createTripDayItemMarkup = (it, index) => {
 
 
 const createTripDaysItemTemplate = (days) => {
-  if (days === ``) {
-    const tripDayItems = createTripDayItemMarkup();
-    return (
-      `${tripDayItems}`
-    );
-  } else {
-    const tripDayItems = days.map((it, index) => createTripDayItemMarkup(it, index)).join(`\n`);
-    return (
-      `${tripDayItems}`
-    );
-  }
+  return days === `` ? createTripDayItemMarkup() : days.map((it, index) => createTripDayItemMarkup(it, index)).join(`\n`);
 };
 
 export default class DaysItem extends AbstractComponent {
