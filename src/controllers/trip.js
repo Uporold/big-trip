@@ -47,46 +47,46 @@ const renderEvent = (eventListElement, event) => {
 };
 
 const getSortedEvents = (events, sortType) => {
-  let sortedEvents = [];
   const showingEvents = events.slice();
 
   switch (sortType) {
     case SortType.PRICE:
-      sortedEvents = showingEvents.sort((a, b) => a.price - b.price);
+      showingEvents.sort((a, b) => b.price - a.price);
       break;
     case SortType.TIME:
-      sortedEvents = showingEvents.sort((a, b) => b.startDate - a.startDate);
-      break;
-    case SortType.EVENT:
-      sortedEvents = showingEvents;
+      showingEvents.sort((a, b) => (b.endDate - b.startDate) - (a.endDate - a.startDate));
       break;
   }
 
-  return sortedEvents.slice();
+  return showingEvents;
 };
 
 const getDaysContainer = (container, dates = ``) => {
   container.innerHTML = ``;
   const daysItem = new DaysItemComponent(dates);
+  if (dates === ``) {
+    daysItem.getElement().querySelector(`.day__info`).innerHTML = ``;
+  }
   render(container, daysItem);
 
   return dates !== `` ? daysItem.getElement().querySelectorAll(`.trip-events__list`) : daysItem.getElement().querySelector(`.trip-events__list`);
 };
 
-const renderEvents = (events, trailDates, container) => {
+const renderEvents = (events, container) => {
+  events.forEach((event) => renderEvent(container, event));
+};
+
+const renderDefaultEvents = (events, trailDates, container) => {
   const tripEventsList = getDaysContainer(container, trailDates);
   for (let j = 0; j < tripEventsList.length; j++) {
     const dayEvents = events.filter((event) => event.startDate.getDate() === trailDates[j].day);
-    dayEvents.forEach((event) => renderEvent(tripEventsList[j], event));
+    renderEvents(dayEvents, tripEventsList[j]);
   }
 };
 
 const renderSortedEvents = (sortedEvents, container) => {
   const tripEventsList = getDaysContainer(container);
-  sortedEvents.slice()
-    .forEach((event) => {
-      renderEvent(tripEventsList, event);
-    });
+  renderEvents(sortedEvents, tripEventsList);
 };
 
 export default class TripController {
@@ -107,14 +107,14 @@ export default class TripController {
       render(container, this._tripDaysContainer);
 
       const tripDaysElement = this._tripDaysContainer.getElement();
-      renderEvents(events, trailDates, tripDaysElement);
+      renderDefaultEvents(events, trailDates, tripDaysElement);
 
       this._sortingComponent.setSortTypeChangeHandler((sortType) => {
         const sortedEvents = getSortedEvents(events, sortType);
         if (sortType !== `event`) {
           renderSortedEvents(sortedEvents, tripDaysElement);
         } else {
-          renderEvents(events, trailDates, tripDaysElement);
+          renderDefaultEvents(events, trailDates, tripDaysElement);
         }
       });
     }
