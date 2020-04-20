@@ -77,6 +77,7 @@ const renderEvents = (events, container) => {
 };
 
 const renderDefaultEvents = (events, trailDates, container) => {
+  document.querySelector(`.trip-sort__item--day`).textContent = `Day`;
   const tripEventsList = getDaysContainer(container, trailDates);
   for (let j = 0; j < tripEventsList.length; j++) {
     const dayEvents = events.filter((event) => event.startDate.getDate() === trailDates[j].day);
@@ -85,6 +86,7 @@ const renderDefaultEvents = (events, trailDates, container) => {
 };
 
 const renderSortedEvents = (sortedEvents, container) => {
+  document.querySelector(`.trip-sort__item--day`).textContent = ``;
   const tripEventsList = getDaysContainer(container);
   renderEvents(sortedEvents, tripEventsList);
 };
