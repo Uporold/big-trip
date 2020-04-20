@@ -1,11 +1,3 @@
-import {months} from "./const";
-
-export const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`,
-  AFTEREND: `afterend`
-};
-
 export const shuffleArray = function (array) {
   for (let i = array.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
@@ -14,29 +6,6 @@ export const shuffleArray = function (array) {
     array[i] = temp;
   }
   return array;
-};
-
-const castTimeFormat = (value) => {
-  return value < 10 ? `0${value}` : String(value);
-};
-
-export const formatTime = (date, forForm = false) => {
-  const year = castTimeFormat(date.getUTCFullYear()) % 2000;
-  const month = castTimeFormat(date.getMonth());
-  const day = castTimeFormat(date.getDate());
-  const hour = castTimeFormat(date.getHours() % 12);
-  const minute = castTimeFormat(date.getMinutes());
-
-  return forForm ? `${day}/${month}/${year} ${hour}:${minute}` : `${hour}:${minute}`;
-};
-
-export const formatTimeDiff = (timeDiff) => {
-  const time = Math.trunc((timeDiff) / 60000);
-  const minutes = time % 60;
-  const days = Math.trunc((time - minutes) / 1440);
-  const hours = Math.trunc((time - minutes) / 60 - days * 24);
-
-  return `${days > 0 ? days + `D` : ``} ${hours > 0 ? hours + `H` : ``} ${minutes > 0 ? minutes + `M` : ``}`;
 };
 
 export const getTotalPrice = (array) => {
@@ -64,31 +33,4 @@ export const getRandomArrayItem = (array) => {
 
 export const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max - min));
-};
-
-export const getNoRepeatingDates = (events) => {
-  const set = new Set();
-  events.forEach((evt) => set.add(JSON.stringify({day: evt.startDate.getDate(), month: months[evt.startDate.getMonth()]})));
-  return Array.from(set).map((evt) => JSON.parse(evt));
-};
-
-export const createElement = (template, groupFlag = false) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
-
-  return groupFlag ? newElement : newElement.firstChild;
-};
-
-export const render = (container, element, place = RenderPosition.BEFOREEND) => {
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-    case RenderPosition.AFTEREND:
-      container.after(element);
-      break;
-  }
 };

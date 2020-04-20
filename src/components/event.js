@@ -1,5 +1,6 @@
-import {formatTime, formatTimeDiff, createElement} from "../utils";
+import {formatTime, formatTimeDiff} from "../utils/time";
 import {typeItemsActivity} from "../const";
+import AbstractComponent from "./abstract-component";
 
 export const createTripEventOffersMarkup = (name, price) => {
   return (
@@ -54,26 +55,19 @@ const createTripEventTemplate = (event) => {
   );
 };
 
-export default class Event {
+export default class Event extends AbstractComponent {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripEventTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setArrowHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
   }
 }
 

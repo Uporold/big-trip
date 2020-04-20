@@ -1,4 +1,4 @@
-import {createElement} from "../utils";
+import AbstractComponent from "./abstract-component";
 
 const createTripInfoTemplate = (trail, days) => {
   const daysInterval = `${days.length ? `${days[0].month} ${days[0].day}&nbsp;&nbsp;&mdash;&nbsp;${days[0].month !== days[days.length - 1].month ? days[days.length - 1].month : ``} ${days[days.length - 1].day}` : ``}`;
@@ -12,27 +12,15 @@ const createTripInfoTemplate = (trail, days) => {
   );
 };
 
-export default class Trail {
+export default class Trail extends AbstractComponent {
   constructor(trail, days) {
+    super();
     this._trail = trail;
     this._days = days;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripInfoTemplate(this._trail, this._days);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 
