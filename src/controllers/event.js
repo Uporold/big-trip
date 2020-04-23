@@ -45,7 +45,7 @@ export default class EventController {
 
     this._eventEditComponent.setFavoritesButtonClickHandler(() => {
       this._onDataChange(event, Object.assign({}, event, {
-        isFavorite: !event.isFavorite,
+        isFavorite: !event.isFavorite
       }));
     });
 
@@ -65,7 +65,7 @@ export default class EventController {
   }
 
   _replaceEditToEvent() {
-    this._eventEditComponent.reset();
+    // this._eventEditComponent.reset();
     replace(this._eventComponent, this._eventEditComponent);
     this._mode = Mode.DEFAULT;
   }

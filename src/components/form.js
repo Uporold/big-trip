@@ -105,6 +105,8 @@ export default class TripForm extends AbstractSmartComponent {
     super();
     this._event = event;
     this._submitHandler = null;
+    this._FavoriteHandler = null;
+    this._ArrowHandler = null;
   }
 
   getTemplate() {
@@ -113,8 +115,8 @@ export default class TripForm extends AbstractSmartComponent {
 
   recoveryListeners() {
     this.setSubmitHandler(this._submitHandler);
-    this.setFavoritesButtonClickHandler(this._submitHandler);
-    this.setArrowHandler(this._submitHandler);
+    this.setFavoritesButtonClickHandler(this._FavoriteHandler);
+    this.setArrowHandler(this._ArrowHandler);
   }
 
   setSubmitHandler(handler) {
@@ -125,13 +127,14 @@ export default class TripForm extends AbstractSmartComponent {
   setFavoritesButtonClickHandler(handler) {
     this.getElement().querySelector(`.event__favorite-btn`)
       .addEventListener(`click`, handler);
-    this._submitHandler = handler;
+    this._FavoriteHandler = handler;
+    // this.rerender();
   }
 
   setArrowHandler(handler) {
     this.getElement().querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, handler);
-    this._submitHandler = handler;
+    this._ArrowHandler = handler;
   }
 
   rerender() {
