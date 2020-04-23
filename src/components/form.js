@@ -13,8 +13,9 @@ const createTypeMarkup = (type, eventType) => {
   );
 };
 
-const createTripFormTemplate = (event) => {
-  const {type, city, offers, startDate, endDate, info, price, isFavorite} = event;
+const createTripFormTemplate = (event, options = {}) => {
+  const {type, city, offers, startDate, endDate, info, price} = event;
+  const {isFavorite} = options;
   const startTimeForm = formatTime(startDate, true);
   const endTimeForm = formatTime(endDate, true);
   const photo = info.photo;
@@ -104,13 +105,16 @@ export default class TripForm extends AbstractSmartComponent {
   constructor(event) {
     super();
     this._event = event;
+    this._isFavorite = event.isFavorite;
+
     this._submitHandler = null;
     this._FavoriteHandler = null;
     this._ArrowHandler = null;
   }
 
   getTemplate() {
-    return createTripFormTemplate(this._event);
+    return createTripFormTemplate(this._event, {
+      isFavorite: this._isFavorite});
   }
 
   recoveryListeners() {
@@ -128,7 +132,6 @@ export default class TripForm extends AbstractSmartComponent {
     this.getElement().querySelector(`.event__favorite-btn`)
       .addEventListener(`click`, handler);
     this._FavoriteHandler = handler;
-    // this.rerender();
   }
 
   setArrowHandler(handler) {
@@ -143,7 +146,8 @@ export default class TripForm extends AbstractSmartComponent {
   }
 
   reset() {
-
+    const event = this._event;
+    this._isFavorite = !!event.isFavorite;
     this.rerender();
   }
 }
