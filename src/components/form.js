@@ -2,7 +2,7 @@ import {typeItemsActivity, typeItemsTransfer} from "../const";
 import Offers from "./offers";
 import Destination from "./destination";
 import {formatTime} from "../utils/time";
-import Event from "./event";
+import AbstractSmartComponent from "./abstact-smart-component";
 
 const createTypeMarkup = (type, eventType) => {
   return (
@@ -100,17 +100,48 @@ const createTripFormTemplate = (event) => {
   );
 };
 
-export default class TripForm extends Event {
+export default class TripForm extends AbstractSmartComponent {
   constructor(event) {
-    super(event);
+    super();
+    this._event = event;
+    this._submitHandler = null;
   }
 
   getTemplate() {
     return createTripFormTemplate(this._event);
   }
 
+  recoveryListeners() {
+    this.setSubmitHandler(this._submitHandler);
+    this.setFavoritesButtonClickHandler(this._submitHandler);
+    this.setArrowHandler(this._submitHandler);
+  }
+
   setSubmitHandler(handler) {
     this.getElement().addEventListener(`submit`, handler);
+    this._submitHandler = handler;
+  }
+
+  setFavoritesButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__favorite-btn`)
+      .addEventListener(`click`, handler);
+    this._submitHandler = handler;
+  }
+
+  setArrowHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
+    this._submitHandler = handler;
+  }
+
+  rerender() {
+    super.rerender();
+
+  }
+
+  reset() {
+
+    this.rerender();
   }
 }
 

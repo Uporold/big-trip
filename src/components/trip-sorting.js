@@ -64,6 +64,9 @@ export default class Sorting extends AbstractComponent {
         return;
       }
 
+      const dayTitle = this._element.querySelector(`.trip-sort__item--day`);
+      dayTitle.style.visibility = sortType === `event` ? `visible` : `hidden`;
+      this._currenSortType = sortType;
       this._currenSortType = sortType;
 
       handler(this._currenSortType);

@@ -9,7 +9,7 @@ import {render, RenderPosition} from "./utils/render";
 import TripController from "./controllers/trip";
 
 
-const EVENTS_COUNT = 20;
+const EVENTS_COUNT = 4;
 
 const events = generateEvents(EVENTS_COUNT).slice().sort((a, b) => a.startDate - b.startDate);
 const trail = getTrail(events);
