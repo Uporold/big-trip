@@ -39,6 +39,7 @@ export default class EventController {
     });
 
     this._eventEditComponent.setArrowHandler(() => {
+      this._eventEditComponent.reset();
       this._replaceEditToEvent();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     });
