@@ -7,11 +7,11 @@ import {getTotalPrice, getTrail} from "./utils/trail-info";
 import {getNoRepeatingDates} from "./utils/time";
 import {render, RenderPosition} from "./utils/render";
 import TripController from "./controllers/trip";
+import {generatePointInfo} from "./mock/point-info";
 
-
-const EVENTS_COUNT = 4;
-
-const events = generateEvents(EVENTS_COUNT).slice().sort((a, b) => a.startDate - b.startDate);
+const EVENTS_COUNT = 5;
+const point = generatePointInfo();
+const events = generateEvents(EVENTS_COUNT, point).slice().sort((a, b) => a.startDate - b.startDate);
 const trail = getTrail(events);
 const trailDates = getNoRepeatingDates(events);
 const totalPrice = getTotalPrice(events);
@@ -36,4 +36,4 @@ render(tripMainControlsElement, filterComponent);
 
 const tripEventsElement = document.querySelector(`.trip-events`);
 const trip = new TripController(tripEventsElement);
-trip.render(events);
+trip.render(events, point);

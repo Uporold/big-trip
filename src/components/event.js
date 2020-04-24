@@ -14,10 +14,11 @@ export const createTripEventOffersMarkup = (name, price) => {
 
 
 const createTripEventTemplate = (event) => {
-  const {type, city, offers, startDate, endDate, price} = event;
+  const {type, offers, startDate, endDate, price, info} = event;
   const startTime = formatTime(startDate);
   const endTime = formatTime(endDate);
   const timeDiff = endDate - startDate;
+  const city = info.city;
   const offersMarkup = offers.map((it) => createTripEventOffersMarkup(it.title, it.price)).slice(0, 3).join(`\n`);
   const isTypeActivity = typeItemsActivity.some((it) => type === it) ? `in` : `to`;
 

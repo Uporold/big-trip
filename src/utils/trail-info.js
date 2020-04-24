@@ -12,5 +12,5 @@ export const getTotalPrice = (array) => {
 };
 
 export const getTrail = (events) => {
-  return events.length <= 3 ? events.map((event) => event.city).join(` — `) : `${events[0].city} — ... — ${events[events.length - 1].city}`;
+  return events.length <= 3 ? events.map((event) => event.info.city).join(` — `) : `${events[0].info.city} — ... — ${events[events.length - 1].info.city}`;
 };

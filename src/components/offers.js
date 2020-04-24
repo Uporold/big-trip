@@ -15,6 +15,7 @@ const createOfferSelectorMarkup = (name, price, title) => {
 
 const createTripFormEventOffersTemplate = (selectors) => {
   const selectorMarkup = selectors.map((it) => createOfferSelectorMarkup(it.name, it.price, it.title)).join(`\n`);
+
   return (
     `<section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>

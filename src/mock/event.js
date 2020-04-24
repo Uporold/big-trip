@@ -1,6 +1,7 @@
-import {generateSelectors} from "./selector";
-import {photos, descriptions, typeItems, cityItems} from "../const";
-import {shuffleArray, getRandomIntegerNumber, getRandomArrayItem} from "../utils/randomize";
+import {createOffersArray} from "./selector";
+import {typeItems} from "../const";
+import {getRandomIntegerNumber, getRandomArrayItem} from "../utils/randomize";
+
 
 const getRandomDate = (date) => {
   const targetDate = new Date(date);
@@ -13,16 +14,14 @@ const getRandomDate = (date) => {
   return targetDate;
 };
 
-const generateEvent = () => {
+const generateEvent = (point) => {
   const startDate = getRandomDate(new Date());
+  const type = getRandomArrayItem(typeItems);
+  const info = getRandomArrayItem(point);
   return {
-    type: getRandomArrayItem(typeItems),
-    city: cityItems.pop(),
-    offers: shuffleArray(generateSelectors()).slice(Math.random() * generateSelectors().length),
-    info: {
-      description: shuffleArray(descriptions).slice(Math.random() * descriptions.length),
-      photo: shuffleArray(photos).slice(Math.random() * photos.length),
-    },
+    type,
+    offers: createOffersArray(Math.random() * 5, type),
+    info,
     startDate,
     endDate: getRandomDate(startDate),
     price: getRandomIntegerNumber(10, 1000),
@@ -30,10 +29,8 @@ const generateEvent = () => {
   };
 };
 
-const generateEvents = (count) => {
-  return new Array(count)
-    .fill(``)
-    .map(generateEvent);
+const generateEvents = (count, point) => {
+  return new Array(count).fill(``).map(() => generateEvent(point));
 };
 
 export {generateEvent, generateEvents};

@@ -1,23 +1,17 @@
-export const generateSelectors = () => {
-  return [{
-    name: `luggage`,
-    price: 30,
-    title: `Add luggage`
-  }, {
-    name: `comfort`,
-    price: 100,
-    title: `Switch to comfort class`
-  }, {
-    name: `meal`,
-    price: 15,
-    title: `Add meal`
-  }, {
-    name: `seats`,
-    price: 5,
-    title: `Choose seats`
-  }, {
-    name: `train`,
-    price: 40,
-    title: `Travel by train`
-  }];
+
+const generateSelectors = (type, i) => {
+  return {
+    type,
+    name: type + `Offer${i + 1}`,
+    price: Math.floor(Math.random() * 100),
+    title: type + ` offer ${i + 1}`
+  };
+};
+
+export const createOffersArray = (amount, type) => {
+  const selectors = [];
+  for (let i = 0; i < amount; i++) {
+    selectors.push(generateSelectors(type, i));
+  }
+  return selectors;
 };
