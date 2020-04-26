@@ -2,6 +2,8 @@ import {formatTime, formatTimeDiff} from "../utils/time";
 import {typeItemsActivity} from "../const";
 import AbstractComponent from "./abstract-component";
 
+const OFFERS_PREVIEW_LIMIT = 3;
+
 export const createTripEventOffersMarkup = (name, price) => {
   return (
     `<li class="event__offer">
@@ -14,11 +16,12 @@ export const createTripEventOffersMarkup = (name, price) => {
 
 
 const createTripEventTemplate = (event) => {
-  const {type, city, offers, startDate, endDate, price} = event;
+  const {type, offers, startDate, endDate, price, info} = event;
   const startTime = formatTime(startDate);
   const endTime = formatTime(endDate);
   const timeDiff = endDate - startDate;
-  const offersMarkup = offers.map((it) => createTripEventOffersMarkup(it.title, it.price)).slice(0, 3).join(`\n`);
+  const city = info.city;
+  const offersMarkup = offers.filter((it) => it.isChecked).slice(0, OFFERS_PREVIEW_LIMIT).map((it) => createTripEventOffersMarkup(it.title, it.price)).join(`\n`);
   const isTypeActivity = typeItemsActivity.some((it) => type === it) ? `in` : `to`;
 
   return (

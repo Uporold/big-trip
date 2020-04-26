@@ -1,10 +1,10 @@
 import AbstractComponent from "./abstract-component";
 
-const createOfferSelectorMarkup = (name, price, title) => {
+const createOfferSelectorMarkup = (name, price, title, isChecked) => {
   return (
     ` <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-1" type="checkbox" name="event-offer-${name}" ${name ? `checked` : ``}>
-        <label class="event__offer-label" for="event-offer-${name}-1">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name.toLowerCase()}-1" type="checkbox" name="event-offer-${name.toLowerCase()}" ${isChecked ? `checked` : ``}>
+        <label class="event__offer-label" for="event-offer-${name.toLowerCase()}-1">
           <span class="event__offer-title">${title}</span>
           &plus;
           &euro;&nbsp;<span class="event__offer-price">${price}</span>
@@ -14,7 +14,8 @@ const createOfferSelectorMarkup = (name, price, title) => {
 };
 
 const createTripFormEventOffersTemplate = (selectors) => {
-  const selectorMarkup = selectors.map((it) => createOfferSelectorMarkup(it.name, it.price, it.title)).join(`\n`);
+  const selectorMarkup = selectors.map((it) => createOfferSelectorMarkup(it.name, it.price, it.title, it.isChecked)).join(`\n`);
+
   return (
     `<section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>

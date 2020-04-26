@@ -1,33 +1,50 @@
-import {typeItemsActivity, typeItemsTransfer} from "../const";
+import {typeItemsActivity, typeItemsTransfer, cityItems} from "../const";
 import Offers from "./offers";
 import Destination from "./destination";
 import {formatTime} from "../utils/time";
-import Event from "./event";
+import AbstractSmartComponent from "./abstact-smart-component";
 
 const createTypeMarkup = (type, eventType) => {
   return (
     `<div class="event__type-item">
-      <input id="event-type-${type.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type.toLowerCase()}" ${type === eventType ? `checked` : ``}>
+      <input id="event-type-${type.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${type === eventType ? `checked` : ``}>
       <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type.toLowerCase()}-1">${type}</label>
     </div>`
   );
 };
 
-const createTripFormTemplate = (event) => {
-  const {type, city, offers, startDate, endDate, info, price, isFavorite} = event;
+const createDestinationListMarkup = (city) => {
+  return (
+    `<option value="${city}"></option>`
+  );
+};
+
+const createTripFormTemplate = (event, isFavorite, newType, city, points, types) => {
+  const {type, offers, info, startDate, endDate, price} = event;
   const startTimeForm = formatTime(startDate, true);
   const endTimeForm = formatTime(endDate, true);
   const photo = info.photo;
   const description = info.description;
-  const transferMarkup = typeItemsTransfer.map((it) => createTypeMarkup(it, type)).join(`\n`);
-  const activityMarkup = typeItemsActivity.map((it) => createTypeMarkup(it, type)).join(`\n`);
+  const oldCity = info.city;
+
+  const typeOffersNew = types.find((it) => it.type === newType);
+  const updateTypes = type === typeOffersNew.type ? offers : typeOffersNew.offers;
+
+  const filteredInfo = points.find((it)=> it.city === city);
+  const updateDescription = oldCity !== city ? filteredInfo.description : description;
+  const updatePhoto = oldCity !== city ? filteredInfo.photo : photo;
+
+  const transferMarkup = typeItemsTransfer.map((it) => createTypeMarkup(it, newType)).join(`\n`);
+  const activityMarkup = typeItemsActivity.map((it) => createTypeMarkup(it, newType)).join(`\n`);
+  const destinationListMarkup = cityItems.filter((it) => it !== city).map((it) => createDestinationListMarkup(it)).join(`\n`);
+
   return (
     `<form class="trip-events__item  event  event--edit" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${type ? type.toLowerCase() : `bus`}.png" alt="Event type icon">
+              <img class="event__type-icon" width="17" height="17" src="img/icons/${type ? newType.toLowerCase() : `bus`}.png" alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -44,14 +61,11 @@ const createTripFormTemplate = (event) => {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${type ? type : `Bus`} to
+              ${newType ? newType : `Bus`} to
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city ? city : ``}" list="destination-list-1">
             <datalist id="destination-list-1">
-              <option value="Amsterdam"></option>
-              <option value="Geneva"></option>
-              <option value="Chamonix"></option>
-              <option value="Saint Petersburg"></option>
+              ${destinationListMarkup}
             </datalist>
           </div>
 
@@ -92,25 +106,91 @@ const createTripFormTemplate = (event) => {
         </header>
         ${!type || (photo || description) ?
       `<section class="event__details">
-        ${new Offers(offers).getTemplate()}
-        ${new Destination(description, photo).getTemplate()}
+        ${offers.length ?
+      `${new Offers(updateTypes).getTemplate()}`
+      : ``}
+        ${new Destination(updateDescription, updatePhoto).getTemplate()}
        </section>`
       : ``}
     </form>`
   );
 };
 
-export default class TripForm extends Event {
-  constructor(event) {
-    super(event);
+export default class TripForm extends AbstractSmartComponent {
+  constructor(event, points, types) {
+    super();
+
+    this._event = event;
+    this._isFavorite = event.isFavorite;
+    this._type = event.type;
+    this._city = event.info.city;
+    this._points = points;
+    this._types = types;
+
+    this._submitHandler = null;
+    this._FavoriteHandler = null;
+    this._ArrowHandler = null;
+
   }
 
   getTemplate() {
-    return createTripFormTemplate(this._event);
+    return createTripFormTemplate(this._event, this._isFavorite, this._type, this._city, this._points, this._types);
+  }
+
+  recoveryListeners() {
+    this._subscribeOnEvents();
+    this.setSubmitHandler(this._submitHandler);
+    this.setFavoritesButtonClickHandler(this._FavoriteHandler);
+    this.setArrowHandler(this._ArrowHandler);
   }
 
   setSubmitHandler(handler) {
     this.getElement().addEventListener(`submit`, handler);
+    this._submitHandler = handler;
+  }
+
+  setFavoritesButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__favorite-btn`)
+      .addEventListener(`click`, handler);
+    this._FavoriteHandler = handler;
+  }
+
+  setArrowHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
+    this._ArrowHandler = handler;
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelectorAll(`.event__type-input`).forEach((input) =>{
+      input.addEventListener(`change`, (evt) => {
+        this._type = evt.target.value;
+        this.rerender();
+      });
+    });
+
+    element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
+      if (this._points.find((it) => it.city === evt.target.value)) {
+        this._city = evt.target.value;
+        this.rerender();
+      }
+    });
+  }
+
+
+  rerender() {
+    super.rerender();
+
+  }
+
+  reset() {
+    const event = this._event;
+    this._type = this._event.type;
+    this._city = this._event.info.city;
+    this._isFavorite = !!event.isFavorite;
+    this.rerender();
   }
 }
 

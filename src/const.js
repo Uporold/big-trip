@@ -44,7 +44,8 @@ export const typeItems = [
   `Drive`,
   `Flight`,
   `Check-in`,
-  `Sightseeing`
+  `Sightseeing`,
+  `Restaurant`
 ];
 
 export const cityItems = [
