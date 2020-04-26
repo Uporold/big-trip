@@ -1,24 +1,15 @@
 import {months} from "../const";
-
-const castTimeFormat = (value) => {
-  return value < 10 ? `0${value}` : String(value);
-};
+import moment from "moment";
 
 export const formatTime = (date, forForm = false) => {
-  const year = castTimeFormat(date.getUTCFullYear()) % 2000;
-  const month = castTimeFormat(date.getMonth());
-  const day = castTimeFormat(date.getDate());
-  const hour = castTimeFormat(date.getHours() % 12);
-  const minute = castTimeFormat(date.getMinutes());
-
-  return forForm ? `${day}/${month}/${year} ${hour}:${minute}` : `${hour}:${minute}`;
+  return forForm ? moment(date).format(`D/M/YY`) : moment(date).format(`HH:mm`);
 };
 
 export const formatTimeDiff = (timeDiff) => {
-  const time = Math.trunc((timeDiff) / 60000);
-  const minutes = time % 60;
-  const days = Math.trunc((time - minutes) / 1440);
-  const hours = Math.trunc((time - minutes) / 60 - days * 24);
+  const duration = moment.duration(timeDiff);
+  const days = duration.days();
+  const hours = duration.hours();
+  const minutes = duration.minutes();
 
   return `${days > 0 ? days + `D` : ``} ${hours > 0 ? hours + `H` : ``} ${minutes > 0 ? minutes + `M` : ``}`;
 };
