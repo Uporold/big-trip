@@ -61,7 +61,7 @@ const createTripFormTemplate = (event, isFavorite, newType, city, points, types)
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${type ? type : `Bus`} to
+              ${newType ? newType : `Bus`} to
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city ? city : ``}" list="destination-list-1">
             <datalist id="destination-list-1">
@@ -172,9 +172,10 @@ export default class TripForm extends AbstractSmartComponent {
     });
 
     element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
-      this._city = evt.target.value;
-      this.rerender();
-
+      if (this._points.find((it) => it.city === evt.target.value)) {
+        this._city = evt.target.value;
+        this.rerender();
+      }
     });
   }
 
