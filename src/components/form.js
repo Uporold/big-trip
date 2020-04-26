@@ -3,6 +3,8 @@ import Offers from "./offers";
 import Destination from "./destination";
 import {formatTime} from "../utils/time";
 import AbstractSmartComponent from "./abstact-smart-component";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
 
 const createTypeMarkup = (type, eventType) => {
   return (
@@ -131,6 +133,9 @@ export default class TripForm extends AbstractSmartComponent {
     this._FavoriteHandler = null;
     this._ArrowHandler = null;
 
+    this._flatpickr = null;
+    this._applyFlatpickr();
+
   }
 
   getTemplate() {
@@ -179,9 +184,32 @@ export default class TripForm extends AbstractSmartComponent {
     });
   }
 
+  _applyFlatpickr() {
+    if (this._flatpickr) {
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    const dateBeginElement = this.getElement().querySelector(`#event-start-time-1`);
+    const dateEndElement = this.getElement().querySelector(`#event-end-time-1`);
+    this._flatpickr = flatpickr(dateBeginElement, {
+      allowInput: true,
+      enableTime: true,
+      dateFormat: `d/m/y H:i`,
+      defaultDate: this._event.startDate || `today`
+    });
+
+    this._flatpickr = flatpickr(dateEndElement, {
+      allowInput: true,
+      dateFormat: `d/m/y H:i`,
+      defaultDate: this._event.endDate || `today`
+    });
+
+  }
 
   rerender() {
     super.rerender();
+    this._applyFlatpickr();
 
   }
 
