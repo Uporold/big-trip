@@ -19,27 +19,32 @@ const createDestinationListMarkup = (city) => {
   );
 };
 
-const createTripFormTemplate = (event, isFavorite, type, city, points) => {
-  const {offers, info, startDate, endDate, price} = event;
+const createTripFormTemplate = (event, isFavorite, newType, city, points, types) => {
+  const {type, offers, info, startDate, endDate, price} = event;
   const startTimeForm = formatTime(startDate, true);
   const endTimeForm = formatTime(endDate, true);
   const photo = info.photo;
   const description = info.description;
   const oldCity = info.city;
-  const typeOffers = offers.filter((it) => it.type === type);
-  const filteredInfo = points.filter((it)=> it.city === city);
+
+  const typeOffersNew = types.find((it) => it.type === newType);
+  const updateTypes = type === typeOffersNew.type ? offers : typeOffersNew.offers;
+
+  const filteredInfo = points.find((it)=> it.city === city);
   const updateDescription = oldCity !== city ? filteredInfo.description : description;
   const updatePhoto = oldCity !== city ? filteredInfo.photo : photo;
-  const transferMarkup = typeItemsTransfer.map((it) => createTypeMarkup(it, type)).join(`\n`);
-  const activityMarkup = typeItemsActivity.map((it) => createTypeMarkup(it, type)).join(`\n`);
-  const destinationListMarkup = cityItems.map((it) => createDestinationListMarkup(it)).join(`\n`);
+
+  const transferMarkup = typeItemsTransfer.map((it) => createTypeMarkup(it, newType)).join(`\n`);
+  const activityMarkup = typeItemsActivity.map((it) => createTypeMarkup(it, newType)).join(`\n`);
+  const destinationListMarkup = cityItems.filter((it) => it !== city).map((it) => createDestinationListMarkup(it)).join(`\n`);
+
   return (
     `<form class="trip-events__item  event  event--edit" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${type ? type.toLowerCase() : `bus`}.png" alt="Event type icon">
+              <img class="event__type-icon" width="17" height="17" src="img/icons/${type ? newType.toLowerCase() : `bus`}.png" alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -101,8 +106,8 @@ const createTripFormTemplate = (event, isFavorite, type, city, points) => {
         </header>
         ${!type || (photo || description) ?
       `<section class="event__details">
-        ${typeOffers.length ?
-      `${new Offers(typeOffers).getTemplate()}`
+        ${offers.length ?
+      `${new Offers(updateTypes).getTemplate()}`
       : ``}
         ${new Destination(updateDescription, updatePhoto).getTemplate()}
        </section>`
@@ -112,7 +117,7 @@ const createTripFormTemplate = (event, isFavorite, type, city, points) => {
 };
 
 export default class TripForm extends AbstractSmartComponent {
-  constructor(event, points) {
+  constructor(event, points, types) {
     super();
 
     this._event = event;
@@ -120,6 +125,7 @@ export default class TripForm extends AbstractSmartComponent {
     this._type = event.type;
     this._city = event.info.city;
     this._points = points;
+    this._types = types;
 
     this._submitHandler = null;
     this._FavoriteHandler = null;
@@ -128,7 +134,7 @@ export default class TripForm extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createTripFormTemplate(this._event, this._isFavorite, this._type, this._city, this._points);
+    return createTripFormTemplate(this._event, this._isFavorite, this._type, this._city, this._points, this._types);
   }
 
   recoveryListeners() {

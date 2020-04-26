@@ -33,28 +33,28 @@ const getDaysContainer = (container, dates = ``) => {
   return dates !== `` ? daysItem.getElement().querySelectorAll(`.trip-events__list`) : daysItem.getElement().querySelector(`.trip-events__list`);
 };
 
-const renderEvents = (events, container, onDataChange, onViewChange, points) => {
+const renderEvents = (events, container, onDataChange, onViewChange, points, types) => {
   return events.map((event) => {
-    const eventController = new EventController(container, onDataChange, onViewChange, points);
+    const eventController = new EventController(container, onDataChange, onViewChange, points, types);
     eventController.render(event);
 
     return eventController;
   });
 };
 
-const renderDefaultEvents = (events, trailDates, container, onDataChange, onViewChange, points) => {
+const renderDefaultEvents = (events, trailDates, container, onDataChange, onViewChange, points, types) => {
   const tripEventsList = getDaysContainer(container, trailDates);
   let controllers = [];
   for (let j = 0; j < tripEventsList.length; j++) {
     const dayEvents = events.filter((event) => event.startDate.getDate() === trailDates[j].day);
-    controllers = [...controllers, ...renderEvents(dayEvents, tripEventsList[j], onDataChange, onViewChange, points)];
+    controllers = [...controllers, ...renderEvents(dayEvents, tripEventsList[j], onDataChange, onViewChange, points, types)];
   }
   return controllers;
 };
 
-const renderSortedEvents = (sortedEvents, container, onDataChange, onViewChange, points) => {
+const renderSortedEvents = (sortedEvents, container, onDataChange, onViewChange, points, types) => {
   const tripEventsList = getDaysContainer(container);
-  return renderEvents(sortedEvents, tripEventsList, onDataChange, onViewChange, points);
+  return renderEvents(sortedEvents, tripEventsList, onDataChange, onViewChange, points, types);
 };
 
 export default class TripController {
@@ -73,10 +73,11 @@ export default class TripController {
 
   }
 
-  render(events, points) {
+  render(events, points, types) {
     const container = this._container;
     this._events = events;
     this._points = points;
+    this._types = types;
     this._trailDates = getNoRepeatingDates(this._events);
     if (!this._events.length) {
       render(container, this._noEventsComponent);
@@ -85,16 +86,16 @@ export default class TripController {
       render(container, this._tripDaysContainer);
 
       const tripDaysElement = this._tripDaysContainer.getElement();
-      this._showedEventControllers = renderDefaultEvents(this._events, this._trailDates, tripDaysElement, this._onDataChange, this._onViewChange, this._points);
+      this._showedEventControllers = renderDefaultEvents(this._events, this._trailDates, tripDaysElement, this._onDataChange, this._onViewChange, this._points, this._types);
     }
   }
   _onSortTypeChange(sortType) {
     const sortedEvents = getSortedEvents(this._events, sortType);
     const tripDaysElement = this._tripDaysContainer.getElement();
     if (sortType !== `event`) {
-      this._showedEventControllers = renderSortedEvents(sortedEvents, tripDaysElement, this._onDataChange, this._onViewChange, this._points);
+      this._showedEventControllers = renderSortedEvents(sortedEvents, tripDaysElement, this._onDataChange, this._onViewChange, this._points, this._types);
     } else {
-      this._showedEventControllers = renderDefaultEvents(this._events, this._trailDates, tripDaysElement, this._onDataChange, this._onViewChange, this._points);
+      this._showedEventControllers = renderDefaultEvents(this._events, this._trailDates, tripDaysElement, this._onDataChange, this._onViewChange, this._points, this._types);
     }
   }
 

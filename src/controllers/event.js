@@ -8,11 +8,12 @@ const Mode = {
 };
 
 export default class EventController {
-  constructor(container, onDataChange, onViewChange, points) {
+  constructor(container, onDataChange, onViewChange, points, types) {
     this._container = container;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
     this._points = points;
+    this._types = types;
     this._mode = Mode.DEFAULT;
 
     this._eventComponent = null;
@@ -26,7 +27,7 @@ export default class EventController {
     const oldEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventComponent(event);
-    this._eventEditComponent = new TripFormComponent(event, this._points);
+    this._eventEditComponent = new TripFormComponent(event, this._points, this._types);
 
     this._eventComponent.setArrowHandler(() => {
       this._replaceEventToEdit();
@@ -42,7 +43,6 @@ export default class EventController {
 
     this._eventEditComponent.setArrowHandler(() => {
       this._replaceEditToEvent();
-      this._eventEditComponent.reset();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     });
 

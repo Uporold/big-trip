@@ -20,7 +20,7 @@ const generateEvent = (point) => {
   const info = getRandomArrayItem(point);
   return {
     type,
-    offers: createOffersArray(Math.random() * 5, type),
+    offers: createOffersArray(type, 5, true),
     info,
     startDate,
     endDate: getRandomDate(startDate),
