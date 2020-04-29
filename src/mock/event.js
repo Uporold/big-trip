@@ -2,7 +2,6 @@ import {createOffersArray} from "./selector";
 import {typeItems} from "../const";
 import {getRandomIntegerNumber, getRandomArrayItem} from "../utils/randomize";
 
-
 const getRandomDate = (date) => {
   const targetDate = new Date(date);
   const diffDays = getRandomIntegerNumber(0, 2);
@@ -19,6 +18,7 @@ const generateEvent = (point) => {
   const type = getRandomArrayItem(typeItems);
   const info = getRandomArrayItem(point);
   return {
+    id: String(new Date() + Math.random()),
     type,
     offers: createOffersArray(type, 5, true),
     info,
