@@ -5,6 +5,7 @@ import NoEventsComponent from "../components/no-events";
 import SortingComponent, {SortType} from "../components/trip-sorting";
 import TripDaysContainerComponent from "../components/days-container";
 import DaysItemComponent from "../components/days-item";
+import {FilterType} from "../const";
 
 
 const getSortedEvents = (events, sortType) => {
@@ -97,10 +98,14 @@ export default class TripController {
     if (this._creatingEvent) {
       return;
     }
-
+    this._onFilterChange();
+    this._eventsModel.setFilter(FilterType.EVERYTHING);
     const tripDaysElement = this._tripDaysContainer.getElement();
     this._creatingEvent = new EventController(tripDaysElement, this._onDataChange, this._onViewChange, this._points, this._types);
     this._creatingEvent.render(EmptyEvent, EventControllerMode.ADDING);
+    this._creatingEvent = null;
+
+
   }
 
   _removeEvents() {

@@ -61,6 +61,11 @@ export default class Events {
     this._filterChangeHandlers.push(handler);
   }
 
+  setDefaultFilter() {
+    this.setFilter(FilterType.EVERYTHING);
+    this._activeFilterType = FilterType.EVERYTHING;
+  }
+
   setDataChangeHandler(handler) {
     this._dataChangeHandlers.push(handler);
   }

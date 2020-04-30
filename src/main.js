@@ -45,3 +45,4 @@ trip.render(points, offers);
 tripMainElement.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
   trip.createEvent();
 });
+

@@ -24,19 +24,17 @@ const createDestinationListMarkup = (city) => {
 };
 
 const createTripFormTemplate = (event, isFavorite, newType, city, points, types, mode) => {
-  const {type, offers, info, startDate, endDate, price} = event;
+  const {type, offers, startDate, endDate, price} = event;
   const startTimeForm = formatTime(startDate, true);
   const endTimeForm = formatTime(endDate, true);
-  const photo = info.photo;
-  const description = info.description;
-  const oldCity = info.city;
 
   const typeOffersNew = types.find((it) => it.type === newType);
   const updateTypes = type === typeOffersNew.type ? offers : typeOffersNew.offers;
+  // const updateTypes = types.find((it) => it.type === newType).offers;
 
   const filteredInfo = points.find((it)=> it.city === city);
-  const updateDescription = oldCity !== city ? filteredInfo.description : description;
-  const updatePhoto = oldCity !== city ? filteredInfo.photo : photo;
+  const updateDescription = filteredInfo ? filteredInfo.description : [];
+  const updatePhoto = filteredInfo ? filteredInfo.photo : [];
 
   const transferMarkup = typeItemsTransfer.map((it) => createTypeMarkup(it, newType)).join(`\n`);
   const activityMarkup = typeItemsActivity.map((it) => createTypeMarkup(it, newType)).join(`\n`);
@@ -51,7 +49,6 @@ const createTripFormTemplate = (event, isFavorite, newType, city, points, types,
               <img class="event__type-icon" width="17" height="17" src="img/icons/${type ? newType.toLowerCase() : `bus`}.png" alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
-
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Transfer</legend>
@@ -62,7 +59,6 @@ const createTripFormTemplate = (event, isFavorite, newType, city, points, types,
               </fieldset>
             </div>
           </div>
-
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
               ${newType ? newType : `Bus`} to
@@ -72,7 +68,6 @@ const createTripFormTemplate = (event, isFavorite, newType, city, points, types,
               ${destinationListMarkup}
             </datalist>
           </div>
-
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">
               From
@@ -84,7 +79,6 @@ const createTripFormTemplate = (event, isFavorite, newType, city, points, types,
             </label>
             <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endTimeForm ? endTimeForm : `18/03/19 00:00`}">
           </div>
-
           <div class="event__field-group  event__field-group--price">
             <label class="event__label" for="event-price-1">
               <span class="visually-hidden">Price</span>
@@ -103,23 +97,19 @@ const createTripFormTemplate = (event, isFavorite, newType, city, points, types,
               <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"></path>
             </svg>
           </label>
-
           <button class="event__rollup-btn" type="button">
              <span class="visually-hidden">Open event</span>
           </button>`
       : ``}
         </header>
-        ${!type || (photo || description) ?
-      `<section class="event__details">
-        ${offers.length ?
-      `${new Offers(updateTypes).getTemplate()}`
-      : ``}
+       <section class="event__details">
+        ${offers.length ? `${new Offers(updateTypes).getTemplate()}` : ``}
         ${new Destination(updateDescription, updatePhoto).getTemplate()}
-       </section>`
-      : ``}
+       </section>
     </form>`
   );
 };
+
 
 const parseFormData = (formData) => {
   const type = formData.get(`event-type`);
@@ -154,6 +144,7 @@ export default class TripForm extends AbstractSmartComponent {
     this._FavoriteHandler = null;
     this._ArrowHandler = null;
     this._deleteButtonClickHandler = null;
+    this._OffersHandlers = [];
 
     this._flatpickr = null;
     this._applyFlatpickr();
@@ -171,6 +162,7 @@ export default class TripForm extends AbstractSmartComponent {
     this.setFavoritesButtonClickHandler(this._FavoriteHandler);
     this.setArrowHandler(this._ArrowHandler);
     this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
+    this.setOfferButtonClickHandler(this._OffersHandlers.forEach((handler) => handler));
   }
 
   setSubmitHandler(handler) {
@@ -185,6 +177,14 @@ export default class TripForm extends AbstractSmartComponent {
       this._FavoriteHandler = handler;
     }
   }
+
+  setOfferButtonClickHandler(handler) {
+    this.getElement().querySelectorAll(`.event__offer-checkbox`).forEach((offer) =>{
+      offer.addEventListener(`click`, handler);
+      this._OffersHandlers.push(handler);
+    });
+  }
+
 
   setArrowHandler(handler) {
     if (this._mode !== Mode.ADDING) {

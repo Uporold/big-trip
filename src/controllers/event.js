@@ -68,6 +68,12 @@ export default class EventController {
       }));
     });
 
+    this._eventEditComponent.setOfferButtonClickHandler(() => {
+      this._onDataChange(event.offers, Object.assign({}, event.offers, {
+        isChecked: !event.offers.isChecked
+      }));
+    });
+
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
       const data = this._eventEditComponent.getData();
@@ -96,6 +102,7 @@ export default class EventController {
           remove(oldEventComponent);
           remove(oldEventEditComponent);
         }
+        this._eventEditComponent._subscribeOnEvents();
         document.addEventListener(`keydown`, this._onEscKeyDown);
         render(this._container, this._eventEditComponent, RenderPosition.AFTERBEGIN);
         break;
@@ -138,7 +145,7 @@ export default class EventController {
     if (isEscKey) {
 
       if (this._mode === Mode.ADDING) {
-        this._onDataChange(this, EmptyEvent, null);
+        this._eventEditComponent.getElement().remove();
       }
 
       this._replaceEditToEvent();
