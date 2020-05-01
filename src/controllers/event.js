@@ -57,21 +57,9 @@ export default class EventController {
         this._replaceEditToEvent();
         document.removeEventListener(`keydown`, this._onEscKeyDown);
       } else {
-        this._eventEditComponent.getElement().remove();
+        this._onDataChange(EmptyEvent, null);
         document.removeEventListener(`keydown`, this._onEscKeyDown);
       }
-    });
-
-    this._eventEditComponent.setFavoritesButtonClickHandler(() => {
-      this._onDataChange(event, Object.assign({}, event, {
-        isFavorite: !event.isFavorite
-      }));
-    });
-
-    this._eventEditComponent.setOfferButtonClickHandler(() => {
-      this._onDataChange(event.offers, Object.assign({}, event.offers, {
-        isChecked: !event.offers.isChecked
-      }));
     });
 
     this._eventEditComponent.setSubmitHandler((evt) => {
@@ -83,7 +71,7 @@ export default class EventController {
       if (this._mode !== Mode.ADDING) {
         this._onDataChange(event, null);
       } else {
-        this._eventEditComponent.getElement().remove();
+        this._onDataChange(EmptyEvent, null);
       }
     });
 
@@ -111,8 +99,10 @@ export default class EventController {
   }
 
   setDefaultView() {
-    if (this._mode !== Mode.DEFAULT) {
+    if (this._mode !== Mode.DEFAULT && this._mode !== Mode.ADDING) {
       this._replaceEditToEvent();
+    } else {
+      remove(this._eventEditComponent);
     }
   }
 
@@ -145,7 +135,7 @@ export default class EventController {
     if (isEscKey) {
 
       if (this._mode === Mode.ADDING) {
-        this._eventEditComponent.getElement().remove();
+        this._onDataChange(EmptyEvent, null);
       }
 
       this._replaceEditToEvent();

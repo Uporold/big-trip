@@ -76,7 +76,7 @@ export default class Sorting extends AbstractComponent {
 
   setActiveItem(menuItem) {
     const item = this.getElement().querySelector(`#sort-${menuItem}`);
-
+    this._currenSortType = SortType.EVENT;
     if (item) {
       item.checked = true;
     }

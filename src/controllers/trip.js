@@ -102,10 +102,9 @@ export default class TripController {
     this._eventsModel.setFilter(FilterType.EVERYTHING);
     const tripDaysElement = this._tripDaysContainer.getElement();
     this._creatingEvent = new EventController(tripDaysElement, this._onDataChange, this._onViewChange, this._points, this._types);
+    this._showedEventControllers = [].concat(this._creatingEvent, this._showedEventControllers);
     this._creatingEvent.render(EmptyEvent, EventControllerMode.ADDING);
     this._creatingEvent = null;
-
-
   }
 
   _removeEvents() {
@@ -133,29 +132,26 @@ export default class TripController {
 
   _onDataChange(oldData, newData) {
     const eventController = this._showedEventControllers.find((evt) => evt._eventComponent._event === oldData);
-    const tripDaysElement = this._tripDaysContainer.getElement();
-    const test = new EventController(tripDaysElement, this._onDataChange, this._onViewChange, this._points, this._types);
     if (oldData === EmptyEvent) {
       this._creatingEvent = null;
       if (newData === null) {
-        test.destroy();
+        eventController.destroy();
         this._updateEvents();
       } else {
         this._eventsModel.addEvent(newData);
-        test.render(newData, EventControllerMode.DEFAULT);
+        eventController.render(newData, EventControllerMode.DEFAULT);
+        this._showedEventControllers = [].concat(eventController, this._showedEventControllers);
         this._updateEvents();
-        this._showedEventControllers = [].concat(test, this._showedEventControllers);
       }
     } else if (newData === null) {
       this._eventsModel.removeEvent(oldData.id);
       this._updateEvents();
     } else {
       const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
-
       if (isSuccess) {
         eventController.render(newData, EventControllerMode.DEFAULT);
+        this._updateEvents();
       }
-
     }
   }
 

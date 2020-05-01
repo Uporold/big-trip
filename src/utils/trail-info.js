@@ -3,10 +3,10 @@ export const getTotalPrice = (array) => {
   let offersPriceSum = 0;
   for (let i = 0; i < array.length; i++) {
     let checkPointPrice = array[i].price;
-    mainPriceSum += checkPointPrice;
+    mainPriceSum += +checkPointPrice;
     for (let j = 0; j < array[i].offers.length; j++) {
       if (array[i].offers[j].isChecked) {
-        offersPriceSum += array[i].offers[j].price;
+        offersPriceSum += +array[i].offers[j].price;
       }
     }
   }

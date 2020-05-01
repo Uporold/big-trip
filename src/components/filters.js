@@ -37,10 +37,17 @@ export default class Filters extends AbstractComponent {
   }
 
   setFilterChangeHandler(handler) {
-    this.getElement().addEventListener(`change`, (evt) => {
+    this.getElement().addEventListener(`click`, (evt) => {
       const filterName = getFilterNameById(evt.target.id);
       handler(filterName);
     });
   }
 
+  setActiveItem(filter) {
+    const item = this.getElement().querySelector(`#filter-${filter}`);
+
+    if (item) {
+      item.checked = true;
+    }
+  }
 }
