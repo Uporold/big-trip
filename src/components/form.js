@@ -167,7 +167,7 @@ export default class TripForm extends AbstractSmartComponent {
 
   setSubmitHandler(handler) {
     this.getElement().addEventListener(`submit`, handler);
-    this._submitHandler = handler;
+    this._submitHandler = (evt) => handler(evt, this._event.id);
   }
 
   setFavoritesButtonClickHandler(handler) {
