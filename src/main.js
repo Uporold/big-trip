@@ -47,4 +47,4 @@ tripMainElement.querySelector(`.trip-main__event-add-btn`).addEventListener(`cli
   trip.createEvent();
 });
 
-console.log(events);
+// console.log(events);

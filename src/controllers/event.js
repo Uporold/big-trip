@@ -11,7 +11,6 @@ export const Mode = {
 };
 
 export const EmptyEvent = {
-  id: String(new Date() + Math.random()),
   startDate: null,
   endDate: null,
   type: `Bus`,
