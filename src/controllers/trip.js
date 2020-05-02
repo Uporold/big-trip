@@ -98,7 +98,6 @@ export default class TripController {
     if (this._creatingEvent) {
       return;
     }
-    this._onFilterChange();
     this._eventsModel.setFilter(FilterType.EVERYTHING);
     const tripDaysElement = this._tripDaysContainer.getElement();
     this._creatingEvent = new EventController(tripDaysElement, this._onDataChange, this._onViewChange, this._points, this._types);
@@ -151,7 +150,6 @@ export default class TripController {
       const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
       if (isSuccess) {
         eventController.render(newData, EventControllerMode.DEFAULT);
-        this._updateEvents();
       }
     }
   }

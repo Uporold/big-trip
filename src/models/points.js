@@ -52,6 +52,7 @@ export default class Events {
   }
 
   addEvent(event) {
+    event.id = String(new Date()) + Math.random();
     this._events = [].concat(event, this._events);
     this._callHandlers(this._dataChangeHandlers);
   }
