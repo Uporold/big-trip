@@ -11,6 +11,7 @@ export const Mode = {
 };
 
 export const EmptyEvent = {
+  id: String(new Date() + Math.random()),
   startDate: null,
   endDate: null,
   type: `Bus`,
@@ -62,11 +63,18 @@ export default class EventController {
       }
     });
 
+    this._eventEditComponent.setFavoritesButtonClickHandler(() => {
+      this._onDataChange(event, Object.assign({}, event, {
+        isFavorite: !event.isFavorite
+      }));
+    });
+
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
       const data = this._eventEditComponent.getData();
       this._onDataChange(event, data);
     });
+
     this._eventEditComponent.setDeleteButtonClickHandler(() => {
       if (this._mode !== Mode.ADDING) {
         this._onDataChange(event, null);

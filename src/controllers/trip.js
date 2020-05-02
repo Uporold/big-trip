@@ -115,6 +115,7 @@ export default class TripController {
   _updateEvents() {
     this._removeEvents();
     this._trailDates = getNoRepeatingDates(this._eventsModel.getEvents());
+    // console.log(this._eventsModel.getEvents());
     const tripDaysElement = this._tripDaysContainer.getElement();
     this._showedEventControllers = renderDefaultEvents(this._eventsModel.getEvents(), this._trailDates, tripDaysElement, this._onDataChange, this._onViewChange, this._points, this._types);
   }

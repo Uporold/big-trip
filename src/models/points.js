@@ -32,7 +32,6 @@ export default class Events {
     }
 
     this._events = [].concat(this._events.slice(0, index), event, this._events.slice(index + 1));
-
     this._callHandlers(this._dataChangeHandlers);
 
     return true;
@@ -59,11 +58,6 @@ export default class Events {
 
   setFilterChangeHandler(handler) {
     this._filterChangeHandlers.push(handler);
-  }
-
-  setDefaultFilter() {
-    this.setFilter(FilterType.EVERYTHING);
-    this._activeFilterType = FilterType.EVERYTHING;
   }
 
   setDataChangeHandler(handler) {

@@ -109,7 +109,7 @@ const createTripFormTemplate = (event, isFavorite, newType, city, points, types,
   );
 };
 
-const parseFormData = (formData, offers, isFavorite = false) => {
+const parseFormData = (formData, offers) => {
   const type = formData.get(`event-type`);
   const startDate = flatpickr.parseDate(formData.get(`event-start-time`), `d/m/y H:i`);
   const endDate = flatpickr.parseDate(formData.get(`event-end-time`), `d/m/y H:i`);
@@ -123,7 +123,7 @@ const parseFormData = (formData, offers, isFavorite = false) => {
     },
     offers,
     price: formData.get(`event-price`),
-    isFavorite
+    isFavorite: formData.get(`event-favorite`)
   };
 };
 
@@ -143,9 +143,8 @@ export default class TripForm extends AbstractSmartComponent {
     this._FavoriteHandler = null;
     this._ArrowHandler = null;
     this._deleteButtonClickHandler = null;
-    this._OffersHandlers = [];
 
-    this._flatpickr = null;
+
     this._flatpickrStart = null;
     this._flatpickrEnd = null;
     this._applyFlatpickr();
@@ -160,7 +159,7 @@ export default class TripForm extends AbstractSmartComponent {
   recoveryListeners() {
     this._subscribeOnEvents();
     this.setSubmitHandler(this._submitHandler);
-    // this.setFavoritesButtonClickHandler(this._FavoriteHandler);
+    this.setFavoritesButtonClickHandler(this._FavoriteHandler);
     this.setArrowHandler(this._ArrowHandler);
     this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
     // this.setOfferButtonClickHandler(this._OffersHandlers.forEach((handler) => handler));
@@ -171,13 +170,13 @@ export default class TripForm extends AbstractSmartComponent {
     this._submitHandler = handler;
   }
 
-  /* setFavoritesButtonClickHandler(handler) {
+  setFavoritesButtonClickHandler(handler) {
     if (this._mode !== Mode.ADDING) {
       this.getElement().querySelector(`.event__favorite-btn`)
         .addEventListener(`click`, handler);
       this._FavoriteHandler = handler;
     }
-  }*/
+  }
 
   /* setOfferButtonClickHandler(handler) {
     this.getElement().querySelectorAll(`.event__offer-checkbox`).forEach((offer) =>{
@@ -216,11 +215,6 @@ export default class TripForm extends AbstractSmartComponent {
         price: +it.querySelector(`.event__offer-price`).textContent,
         isChecked: it.querySelector(`.event__offer-checkbox`).checked
       }));
-    const favorite = form.querySelector(`.event__favorite-checkbox`);
-    if (favorite) {
-      const favoriteCheckbox = favorite.checked;
-      return parseFormData(formData, [...offers], favoriteCheckbox);
-    }
     return parseFormData(formData, [...offers]);
   }
 
