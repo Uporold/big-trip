@@ -69,9 +69,10 @@ export default class EventController {
       }));
     });
 
-    this._eventEditComponent.setSubmitHandler((evt) => {
+    this._eventEditComponent.setSubmitHandler((evt, id) => {
       evt.preventDefault();
       const data = this._eventEditComponent.getData();
+      data.id = id || new Date().valueOf();
       this._onDataChange(event, data);
     });
 
