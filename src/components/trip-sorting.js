@@ -47,6 +47,7 @@ export default class Sorting extends AbstractComponent {
 
     this._currenSortType = SortType.EVENT;
   }
+
   getTemplate() {
     return createTripSortingTemplate();
   }
@@ -59,6 +60,7 @@ export default class Sorting extends AbstractComponent {
       }
 
       const sortType = evt.target.dataset.sortType;
+      evt.target.checked = true;
 
       if (this._currenSortType === sortType) {
         return;
@@ -67,9 +69,16 @@ export default class Sorting extends AbstractComponent {
       const dayTitle = this._element.querySelector(`.trip-sort__item--day`);
       dayTitle.style.visibility = sortType === `event` ? `visible` : `hidden`;
       this._currenSortType = sortType;
-      this._currenSortType = sortType;
 
       handler(this._currenSortType);
     });
+  }
+
+  setActiveItem(menuItem) {
+    const item = this.getElement().querySelector(`#sort-${menuItem}`);
+    this._currenSortType = menuItem;
+    if (item) {
+      item.checked = true;
+    }
   }
 }
