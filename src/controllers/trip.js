@@ -7,7 +7,7 @@ import TripDaysContainerComponent from "../components/days-container";
 import DaysItemComponent from "../components/days-item";
 import {FilterType} from "../const";
 
-
+const HIDDEN_CLASS = `visually-hidden`;
 const getSortedEvents = (events, sortType) => {
   const showingEvents = events.slice();
 
@@ -74,7 +74,16 @@ export default class TripController {
     this._onViewChange = this._onViewChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
     this._eventsModel.setFilterChangeHandler(this._onFilterChange);
+    this._addNewEventHandler();
 
+  }
+
+  hide() {
+    this._container.classList.add(HIDDEN_CLASS);
+  }
+
+  show() {
+    this._container.classList.remove(HIDDEN_CLASS);
   }
 
   render(points, types) {
@@ -114,7 +123,6 @@ export default class TripController {
   _updateEvents() {
     this._removeEvents();
     this._trailDates = getNoRepeatingDates(this._eventsModel.getEvents());
-    // console.log(this._eventsModel.getEvents());
     const tripDaysElement = this._tripDaysContainer.getElement();
     this._showedEventControllers = renderDefaultEvents(this._eventsModel.getEvents(), this._trailDates, tripDaysElement, this._onDataChange, this._onViewChange, this._points, this._types);
   }
@@ -161,6 +169,12 @@ export default class TripController {
   _onFilterChange() {
     this._sortingComponent.setActiveItem(SortType.EVENT);
     this._updateEvents();
+  }
+
+  _addNewEventHandler() {
+    document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
+      this.createEvent();
+    });
   }
 }
 

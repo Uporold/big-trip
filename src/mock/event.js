@@ -18,7 +18,7 @@ const generateEvent = (point) => {
   const type = getRandomArrayItem(typeItems);
   const info = getRandomArrayItem(point);
   return {
-    id: String(new Date() + Math.random()),
+    id: String(new Date().valueOf() + Math.random()),
     type,
     offers: createOffersArray(type, 5, true),
     info,

@@ -42,7 +42,6 @@ export default class EventController {
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
     this._mode = mode;
-    this._id = event.id;
 
     this._eventComponent = new EventComponent(event);
     this._eventEditComponent = new TripFormComponent(event, this._points, this._types, this._mode);

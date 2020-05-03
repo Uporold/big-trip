@@ -3,13 +3,15 @@ import TrailController from "./controllers/trail";
 import TripControlsComponent from "./components/controls";
 import FilterController from "./controllers/filter";
 import TripInfoContainer from "./components/trip-info-container";
-import {generateEvents} from "./mock/event";
-
-import {render, RenderPosition} from "./utils/render";
 import TripController from "./controllers/trip";
+import EventsModel from "./models/points";
+import StatisticsComponent from "./components/statistics";
 import {generatePointInfo} from "./mock/point-info";
 import {generateOffers} from "./mock/selector";
-import EventsModel from "./models/points";
+import {generateEvents} from "./mock/event";
+import {render, RenderPosition} from "./utils/render";
+import {FilterType, MenuItem} from "./const";
+
 
 const EVENTS_COUNT = 5;
 const points = generatePointInfo();
@@ -42,9 +44,25 @@ const tripEventsElement = document.querySelector(`.trip-events`);
 const trip = new TripController(tripEventsElement, eventsModel);
 trip.render(points, offers);
 
-tripMainElement.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
+const pageBodyContainer = document.querySelector(`.page-main .page-body__container`);
+const statisticsComponent = new StatisticsComponent(eventsModel);
+render(pageBodyContainer, statisticsComponent, RenderPosition.BEFOREEND);
+statisticsComponent.hide();
+
+tripControlsComponent.setModeChangeHandler((menuItem) => {
+  eventsModel.setFilter(FilterType.EVERYTHING);
   filterController.setDefaultFilter();
-  trip.createEvent();
+  switch (menuItem) {
+    case MenuItem.STATS:
+      pageBodyContainer.style.setProperty(`--after`, `none`);
+      trip.hide();
+      statisticsComponent.show();
+      break;
+    case MenuItem.TABLE:
+      pageBodyContainer.style.setProperty(`--after`, ``);
+      statisticsComponent.hide();
+      trip.show();
+      break;
+  }
 });
 
-// console.log(events);
