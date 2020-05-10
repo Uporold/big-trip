@@ -16,7 +16,7 @@ const getRandomPhotos = () => {
 export const generatePointInfo = () => {
   return cityItems.map((cityName) => {
     return {
-      city: cityName,
+      name: cityName,
       description: getRandomDescription(),
       photo: getRandomPhotos()
     };

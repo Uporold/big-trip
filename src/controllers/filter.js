@@ -29,6 +29,12 @@ export default class FilterController {
     this._filterComponent = new FilterComponent(filters);
     this._filterComponent.setFilterChangeHandler(this._onFilterChange);
 
+    Object.values(FilterType).map((filterType) => {
+      if (!this._eventsModel.getEvents(filterType).length) {
+        this._filterComponent.disableItem(filterType);
+      }
+    });
+
     if (oldComponent) {
       replace(this._filterComponent, oldComponent);
     } else {
@@ -37,15 +43,31 @@ export default class FilterController {
   }
 
   _onFilterChange(filterType) {
-    this._eventsModel.setFilter(filterType);
-    this._activeFilterType = filterType;
+    switch (filterType) {
+      case FilterType.EVERYTHING:
+        this._eventsModel.setFilter(filterType);
+        this._activeFilterType = filterType;
+        break;
+      case FilterType.FUTURE:
+        if (this._eventsModel.getEvents(filterType).length) {
+          this._eventsModel.setFilter(filterType);
+          this._activeFilterType = filterType;
+        }
+        break;
+      case FilterType.PAST:
+        if (this._eventsModel.getEvents(filterType).length) {
+          this._eventsModel.setFilter(filterType);
+          this._activeFilterType = filterType;
+        }
+        break;
+    }
   }
 
 
   setDefaultFilter() {
+    this._eventsModel.setFilter(FilterType.EVERYTHING);
     this._filterComponent.setActiveItem(FilterType.EVERYTHING);
   }
-
 
   _onDataChange() {
     this.render();

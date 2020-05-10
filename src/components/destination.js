@@ -1,19 +1,18 @@
 import {descriptions, photos} from "../const";
 import AbstractComponent from "./abstract-component";
 
-const createPhotosMarkup = (photo) => {
+const createPhotosMarkup = (photo, description) => {
   return (
-    `<img class="event__photo" src="${photo}" alt="Event photo">`
+    `<img class="event__photo" src="${photo}" alt="${description}">`
   );
 };
 
 const createTripFormEventDestinationTemplate = (description = descriptions, photo = photos) => {
-  const photosMarkup = photo.map((it) => createPhotosMarkup(it)).join(`\n`);
-  const descriptionMarkup = description.map((it) => it).join(` `);
+  const photosMarkup = photo.map((it) => createPhotosMarkup(it.src, it.description)).join(`\n`);
   return (
     `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${descriptionMarkup}</p>
+      <p class="event__destination-description">${description}</p>
       <div class="event__photos-container">
         <div class="event__photos-tape">
           ${photosMarkup}

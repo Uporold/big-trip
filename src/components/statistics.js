@@ -29,6 +29,7 @@ const createChartTemplate = (ctx, data, formatter, title) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
+      bullet: `https://www.amcharts.com/lib/images/faces/A04.png`,
       labels: data.map((it) => {
         return it[0].toUpperCase();
       }),
@@ -149,7 +150,7 @@ export default class Statistics extends AbstractSmartComponent {
 
       if (cb(event) === true) {
         typeItemsActivity.forEach((it) => {
-          sum.delete(it.toString());
+          sum.delete(it.toString().toLowerCase());
         });
       }
 

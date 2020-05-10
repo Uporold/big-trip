@@ -2,7 +2,7 @@ import {months} from "../const";
 import moment from "moment";
 
 export const formatTime = (date, forForm = false) => {
-  return forForm ? moment(date).format(`D/M/YY`) : moment(date).format(`HH:mm`);
+  return forForm ? moment(date).format(`YYYY-MM-DDThh:mm`) : moment(date).format(`HH:mm`);
 };
 
 export const formatTimeDiff = (timeDiff) => {
@@ -19,3 +19,4 @@ export const getNoRepeatingDates = (events) => {
   events.forEach((evt) => set.add(JSON.stringify({day: evt.startDate.getDate(), month: months[evt.startDate.getMonth()]})));
   return Array.from(set).map((evt) => JSON.parse(evt));
 };
+

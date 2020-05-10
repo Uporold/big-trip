@@ -4,14 +4,36 @@ import {FilterType} from "../const";
 export default class Events {
   constructor() {
     this._events = [];
+    this._offers = [];
+    this._destinations = [];
     this._dataChangeHandlers = [];
 
     this._activeFilterType = FilterType.EVERYTHING;
     this._filterChangeHandlers = [];
   }
 
-  getEvents() {
-    return getEventsByFilter(this._events, this._activeFilterType);
+  getEvents(ft = this._activeFilterType) {
+    return getEventsByFilter(this._events, ft);
+  }
+
+  getEventsAll() {
+    return this._events;
+  }
+
+  getOffers() {
+    return this._offers;
+  }
+
+  setOffers(offers) {
+    this._offers = Array.from(offers);
+  }
+
+  getDestinations() {
+    return this._destinations;
+  }
+
+  setDestinations(destinations) {
+    this._destinations = Array.from(destinations);
   }
 
   setFilter(filterType) {
@@ -52,7 +74,6 @@ export default class Events {
   }
 
   addEvent(event) {
-    // event.id = String(new Date()) + Math.random();
     this._events = [].concat(event, this._events);
     this._callHandlers(this._dataChangeHandlers);
   }
