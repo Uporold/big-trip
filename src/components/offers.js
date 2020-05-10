@@ -1,20 +1,21 @@
 import AbstractComponent from "./abstract-component";
 
-const createOfferSelectorMarkup = (name, price, title, isChecked) => {
+const createOfferSelectorMarkup = (offer, selectedOffers) => {
+  const isChecked = () => selectedOffers.some((selectedOffer) => selectedOffer.title === offer.title) ? `checked` : ``;
   return (
     ` <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name.toLowerCase()}-1" type="checkbox" name="event-offer-${name.toLowerCase()}" ${isChecked ? `checked` : ``}>
-        <label class="event__offer-label" for="event-offer-${name.toLowerCase()}-1">
-          <span class="event__offer-title">${title}</span>
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title.toLowerCase()}-1" type="checkbox" name="event-offer" ${isChecked()} value="${offer.title}">
+        <label class="event__offer-label" for="event-offer-${offer.title.toLowerCase()}-1">
+          <span class="event__offer-title">${offer.title}</span>
           &plus;
-          &euro;&nbsp;<span class="event__offer-price">${price}</span>
+          &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
         </label>
     </div>`
   );
 };
 
-const createTripFormEventOffersTemplate = (selectors) => {
-  const selectorMarkup = selectors.map((it) => createOfferSelectorMarkup(it.name, it.price, it.title, it.isChecked)).join(`\n`);
+const createTripFormEventOffersTemplate = (allOffers, offers) => {
+  const selectorMarkup = allOffers.map((offer) => createOfferSelectorMarkup(offer, offers)).join(`\n`);
 
   return (
     `<section class="event__section  event__section--offers">
@@ -27,12 +28,13 @@ const createTripFormEventOffersTemplate = (selectors) => {
 };
 
 export default class Offers extends AbstractComponent {
-  constructor(selectors) {
+  constructor(selectors, offers) {
     super();
     this._selectors = selectors;
+    this._offers = offers;
   }
 
   getTemplate() {
-    return createTripFormEventOffersTemplate(this._selectors);
+    return createTripFormEventOffersTemplate(this._selectors, this._offers);
   }
 }

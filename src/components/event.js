@@ -1,6 +1,7 @@
 import {formatTime, formatTimeDiff} from "../utils/time";
 import {typeItemsActivity} from "../const";
 import AbstractComponent from "./abstract-component";
+import {capitalizeFirstLetter} from "../utils/common";
 
 const OFFERS_PREVIEW_LIMIT = 3;
 
@@ -16,13 +17,13 @@ export const createTripEventOffersMarkup = (name, price) => {
 
 
 const createTripEventTemplate = (event) => {
-  const {type, offers, startDate, endDate, price, info} = event;
+  const {type, offers, startDate, endDate, price, destination} = event;
   const startTime = formatTime(startDate);
   const endTime = formatTime(endDate);
   const timeDiff = endDate - startDate;
-  const city = info.city;
-  const offersMarkup = offers.filter((it) => it.isChecked).slice(0, OFFERS_PREVIEW_LIMIT).map((it) => createTripEventOffersMarkup(it.title, it.price)).join(`\n`);
-  const isTypeActivity = typeItemsActivity.some((it) => type === it) ? `in` : `to`;
+  const city = destination.name;
+  const offersMarkup = offers.slice(0, OFFERS_PREVIEW_LIMIT).map((it) => createTripEventOffersMarkup(it.title, it.price)).join(`\n`);
+  const isTypeActivity = typeItemsActivity.some((it) => type === it.toLowerCase()) ? `in` : `to`;
 
   return (
     `<li class="trip-events__item">
@@ -30,7 +31,7 @@ const createTripEventTemplate = (event) => {
            <div class="event__type">
              <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
            </div>
-           <h3 class="event__title">${type} ${isTypeActivity} ${city}</h3>
+           <h3 class="event__title">${capitalizeFirstLetter(type)} ${isTypeActivity} ${city}</h3>
 
            <div class="event__schedule">
              <p class="event__time">

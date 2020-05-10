@@ -19,7 +19,7 @@ export default class TrailController {
   render() {
     const container = this._container;
     const oldComponent = this._trailComponent;
-    const events = this._eventsModel.getEvents();
+    const events = this._eventsModel.getEventsAll().sort((a, b) => a.startDate - b.startDate);
     const trail = getTrail(events);
     const trailDates = getNoRepeatingDates(events);
 

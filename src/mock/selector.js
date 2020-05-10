@@ -20,12 +20,11 @@ const generateOffersObject = (type) => {
     offers: createOffersArray(type, 5)
   };
 };
-const generateSelectors = (type, i, checkFlag = false) => {
+
+const generateSelectors = (type, i) => {
   return {
-    name: type + `Offer${i + 1}`,
     price: Math.floor(Math.random() * 100),
     title: type + ` offer ${i + 1}`,
-    isChecked: checkFlag ? Math.random() > 0.5 : false
   };
 };
 

@@ -11,7 +11,7 @@ const createTripFilterMarkup = (filter, checked) => {
   return (
     `<div class="trip-filters__filter">
       <input id="filter-${filter.toLowerCase()}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filter.toLowerCase()}" ${checked ? `checked` : ``}>
-      <label class="trip-filters__filter-label" for="filter-${filter.toLowerCase()}">${filter}</label>
+      <label id="${filter.toLowerCase()}" class="trip-filters__filter-label" for="filter-${filter.toLowerCase()}">${filter}</label>
     </div>`
   );
 };
@@ -48,6 +48,15 @@ export default class Filters extends AbstractComponent {
 
     if (item) {
       item.checked = true;
+    }
+  }
+
+  disableItem(filter) {
+    const item = this.getElement().querySelector(`#filter-${filter}`);
+
+    if (item) {
+      item.disabled = true;
+      this.getElement().querySelector(`#${filter}`).style = `pointer-events: none; cursor: default;`;
     }
   }
 }

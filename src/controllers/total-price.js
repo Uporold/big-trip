@@ -17,10 +17,8 @@ export default class TotalPriceController {
   render() {
     const container = this._container;
     const oldComponent = this._totalPriceComponent;
-    const events = this._eventsModel.getEvents();
+    const events = this._eventsModel.getEventsAll();
     const totalPrice = getTotalPrice(events);
-
-    // console.log(totalPrice);
 
     this._totalPriceComponent = new TotalPriceComponent(totalPrice);
 

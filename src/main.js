@@ -6,19 +6,17 @@ import TripInfoContainer from "./components/trip-info-container";
 import TripController from "./controllers/trip";
 import EventsModel from "./models/points";
 import StatisticsComponent from "./components/statistics";
-import {generatePointInfo} from "./mock/point-info";
-import {generateOffers} from "./mock/selector";
-import {generateEvents} from "./mock/event";
-import {render, RenderPosition} from "./utils/render";
+import Loading from "./components/loading";
+import API from "./api";
+import {render, RenderPosition, remove} from "./utils/render";
 import {FilterType, MenuItem} from "./const";
 
+const AUTHORIZATION = `Basic aaaaaqAzWsXeDcRfVTgBYhNUjM=`;
+const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
+const api = new API(AUTHORIZATION, END_POINT);
 
-const EVENTS_COUNT = 5;
-const points = generatePointInfo();
-const offers = generateOffers();
-const events = generateEvents(EVENTS_COUNT, points, offers).slice().sort((a, b) => a.startDate - b.startDate);
+
 const eventsModel = new EventsModel();
-eventsModel.setEvents(events);
 
 const tripMainElement = document.querySelector(`.trip-main`);
 const tripInfoContainer = new TripInfoContainer();
@@ -41,8 +39,9 @@ const filterController = new FilterController(tripMainControlsElement, eventsMod
 filterController.render();
 
 const tripEventsElement = document.querySelector(`.trip-events`);
-const trip = new TripController(tripEventsElement, eventsModel);
-trip.render(points, offers);
+const loadingComponent = new Loading();
+render(tripEventsElement, loadingComponent);
+const trip = new TripController(tripEventsElement, eventsModel, filterController, api);
 
 const pageBodyContainer = document.querySelector(`.page-main .page-body__container`);
 const statisticsComponent = new StatisticsComponent(eventsModel);
@@ -66,3 +65,22 @@ tripControlsComponent.setModeChangeHandler((menuItem) => {
   }
 });
 
+document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
+  // filterController.setDefaultFilter();
+  trip.createEvent();
+});
+
+api.getData(`points`)
+  .then((items) => {
+    eventsModel.setEvents(items);
+    api.getData(`offers`)
+      .then((offers) => {
+        eventsModel.setOffers(offers);
+        api.getData(`destinations`)
+          .then((result) => {
+            eventsModel.setDestinations(result);
+            trip.render(eventsModel.getDestinations(), eventsModel.getOffers());
+            remove(loadingComponent);
+          });
+      });
+  });
