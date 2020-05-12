@@ -2,7 +2,7 @@ import {FilterType} from "../const";
 import moment from "moment";
 
 export const isPastDate = (dueDate, date) => {
-  return dueDate < date;
+  return dueDate < date && !isOneDay(date, dueDate);
 };
 
 export const isFutureDate = (dueDate, date) => {

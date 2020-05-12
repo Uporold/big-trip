@@ -4,6 +4,7 @@ import {render, replace, remove} from "../utils/render";
 import {RenderPosition} from "../utils/render";
 import Point from "../models/point";
 import flatpickr from "flatpickr";
+import {switchFormAvailability} from "../utils/common";
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
@@ -103,6 +104,7 @@ export default class EventController {
       this._eventEditComponent.setData({
         saveButtonText: `Saving...`
       });
+      switchFormAvailability(this._eventEditComponent.getElement(), true);
       this._onDataChange(event, data);
     });
 
@@ -111,6 +113,7 @@ export default class EventController {
         this._eventEditComponent.setData({
           deleteButtonText: `Deleting...`,
         });
+        switchFormAvailability(this._eventEditComponent.getElement(), true);
         this._onDataChange(event, null);
       } else {
         this._onDataChange(EmptyEvent, null);
@@ -157,8 +160,10 @@ export default class EventController {
   }
 
   shake() {
+    this._eventEditComponent.getElement().style = `box-shadow: 0px 0px 15px 0px rgba(245,32,32,1);`;
     this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
     setTimeout(() => {
+      this._eventEditComponent.getElement().style = ``;
       this._eventEditComponent.getElement().style.animation = ``;
       this._eventEditComponent.setData({
         saveButtonText: `Save`,

@@ -97,3 +97,4 @@ export const MenuItem = {
   STATS: `stats`,
   TABLE: `table`
 };
+

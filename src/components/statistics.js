@@ -129,9 +129,9 @@ export default class Statistics extends AbstractSmartComponent {
     const timeSpendCtx = element.querySelector(`.statistics__chart--time`);
 
     const BAR_HEIGHT = 55;
-    moneyCtx.height = BAR_HEIGHT * 6;
-    transportCtx.height = BAR_HEIGHT * 4;
-    timeSpendCtx.height = BAR_HEIGHT * 4;
+    moneyCtx.height = BAR_HEIGHT * 8;
+    transportCtx.height = BAR_HEIGHT * 8;
+    timeSpendCtx.height = BAR_HEIGHT * 8;
 
     moneyChart(moneyCtx, this._getMoneyTotal());
     transportChart(transportCtx, this._getTransportTotal());
@@ -183,7 +183,7 @@ export default class Statistics extends AbstractSmartComponent {
   show() {
     super.show();
 
-    this.rerender(this._eventsModel);
+    this.rerender();
   }
 
   recoveryListeners() {}
