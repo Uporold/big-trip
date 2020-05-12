@@ -80,10 +80,12 @@ export default class TripController {
 
   hide() {
     this._container.classList.add(HIDDEN_CLASS);
+    document.querySelector(`.trip-main__event-add-btn`).disabled = true;
   }
 
   show() {
     this._container.classList.remove(HIDDEN_CLASS);
+    document.querySelector(`.trip-main__event-add-btn`).disabled = false;
   }
 
   render(points, types) {
@@ -156,6 +158,7 @@ export default class TripController {
             eventController.render(eventModel, EventControllerMode.DEFAULT);
             this._showedEventControllers = [].concat(eventController, this._showedEventControllers);
             this._updateEvents();
+            this._filterController.setDefaultFilter();
           })
           .catch(() => {
             eventController.shake();
@@ -178,14 +181,14 @@ export default class TripController {
 
           if (isSuccess) {
             eventController.render(eventModel, EventControllerMode.DEFAULT);
-            this._updateEvents();
+            // this._updateEvents();
           }
         })
         .catch(() => {
           eventController.shake();
         });
     }
-    this._updateEvents();
+    // this._updateEvents();
   }
 
 

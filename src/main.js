@@ -7,13 +7,21 @@ import TripController from "./controllers/trip";
 import EventsModel from "./models/points";
 import StatisticsComponent from "./components/statistics";
 import Loading from "./components/loading";
-import API from "./api";
+import API from "./api/index.js";
+import Provider from "./api/provider.js";
+import Store from "./api/store.js";
 import {render, RenderPosition, remove} from "./utils/render";
 import {FilterType, MenuItem} from "./const";
 
 const AUTHORIZATION = `Basic aaaaaqAzWsXeDcRfVTgBYhNUjM=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
+const STORE_PREFIX = `bigtrip-localstorage`;
+const STORE_VER = `v1`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+
 const api = new API(AUTHORIZATION, END_POINT);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 
 
 const eventsModel = new EventsModel();
@@ -41,7 +49,7 @@ filterController.render();
 const tripEventsElement = document.querySelector(`.trip-events`);
 const loadingComponent = new Loading();
 render(tripEventsElement, loadingComponent);
-const trip = new TripController(tripEventsElement, eventsModel, filterController, api);
+const trip = new TripController(tripEventsElement, eventsModel, filterController, apiWithProvider);
 
 const pageBodyContainer = document.querySelector(`.page-main .page-body__container`);
 const statisticsComponent = new StatisticsComponent(eventsModel);
@@ -70,13 +78,13 @@ document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, ()
   trip.createEvent();
 });
 
-api.getData(`points`)
+apiWithProvider.getEvents()
   .then((items) => {
     eventsModel.setEvents(items);
-    api.getData(`offers`)
+    apiWithProvider.getOffers()
       .then((offers) => {
         eventsModel.setOffers(offers);
-        api.getData(`destinations`)
+        apiWithProvider.getDestinations()
           .then((result) => {
             eventsModel.setDestinations(result);
             trip.render(eventsModel.getDestinations(), eventsModel.getOffers());
@@ -84,3 +92,22 @@ api.getData(`points`)
           });
       });
   });
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`)
+    .then(() => {
+      // Действие, в случае успешной регистрации ServiceWorker
+    }).catch(() => {
+    // Действие, в случае ошибки при регистрации ServiceWorker
+    });
+});
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` [offline]`, ``);
+
+  apiWithProvider.sync();
+});
+
+window.addEventListener(`offline`, () => {
+  document.title += ` [offline]`;
+});

@@ -246,7 +246,7 @@ export default class TripForm extends AbstractSmartComponent {
 
     element.querySelector(`.event__input--price`).addEventListener(`change`, (evt) => {
       this._price = passNumbersFromString(evt.target.value) > 0 ? passNumbersFromString(evt.target.value) : ``;
-      this.rerender();
+      // this.rerender();
     });
   }
 
