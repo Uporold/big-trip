@@ -16,7 +16,6 @@ export const switchFormAvailability = (form, disableFlag) => {
   changeStatus(selects, disableFlag);
 };
 
-// Disables a collection of form-elements.
 const changeStatus = (elements, disableFlag) => {
   let length = elements.length;
   while (length--) {
