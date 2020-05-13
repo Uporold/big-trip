@@ -15,8 +15,8 @@ export const Mode = {
 };
 
 export const EmptyEvent = {
-  startDate: null,
-  endDate: null,
+  startDate: flatpickr.parseDate(new Date(), `d/m/y H:i`),
+  endDate: flatpickr.parseDate(new Date(), `d/m/y H:i`),
   type: `bus`,
   destination: {
     name: ``,
@@ -116,6 +116,7 @@ export default class EventController {
         switchFormAvailability(this._eventEditComponent.getElement(), true);
         this._onDataChange(event, null);
       } else {
+        document.querySelector(`.trip-main__event-add-btn`).disabled = false;
         this._onDataChange(EmptyEvent, null);
       }
     });
@@ -194,7 +195,7 @@ export default class EventController {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEscKey) {
-
+      document.querySelector(`.trip-main__event-add-btn`).disabled = false;
       if (this._mode === Mode.ADDING) {
         this._onDataChange(EmptyEvent, null);
       }

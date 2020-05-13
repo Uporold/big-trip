@@ -79,12 +79,12 @@ const createTripFormTemplate = (event, isFavorite, newType, city, points, types,
             <label class="visually-hidden" for="event-start-time-1">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTimeForm ? startTimeForm : `18/03/19 00:00`}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTimeForm}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endTimeForm ? endTimeForm : `18/03/19 00:00`}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endTimeForm}">
           </div>
           <div class="event__field-group  event__field-group--price">
             <label class="event__label" for="event-price-1">
@@ -125,6 +125,8 @@ export default class TripForm extends AbstractSmartComponent {
     this._type = event.type;
     this._city = event.destination.name;
     this._price = event.price;
+    this._startDate = event.startDate;
+    this._endDate = event.endDate;
     this._points = points;
     this._types = types;
     this._mode = mode;
@@ -163,7 +165,7 @@ export default class TripForm extends AbstractSmartComponent {
   setFavoritesButtonClickHandler(handler) {
     if (this._mode === Mode.EDIT) {
       this.getElement().querySelector(`.event__favorite-btn`)
-        .addEventListener(`click`, handler);
+        .addEventListener(`change`, handler);
       this._FavoriteHandler = handler;
     }
   }
@@ -195,7 +197,6 @@ export default class TripForm extends AbstractSmartComponent {
 
   getData() {
     const form = this.getElement();
-
     return new FormData(form);
   }
 
@@ -240,11 +241,8 @@ export default class TripForm extends AbstractSmartComponent {
       element.querySelector(`.event__input--destination`).setCustomValidity(`Please select a value.`);
     }
 
-    if (!element.querySelector(`.event__input--price`).value) {
-      element.querySelector(`.event__input--price`).setCustomValidity(`Please enter a price.`);
-    }
-
-    element.querySelector(`.event__input--price`).addEventListener(`change`, (evt) => {
+    element.querySelector(`.event__input--price`).addEventListener(`input`, (evt) => {
+      evt.preventDefault();
       this._price = passNumbersFromString(evt.target.value) > 0 ? passNumbersFromString(evt.target.value) : ``;
       // this.rerender();
     });
