@@ -28,8 +28,9 @@ const createDestinationListMarkup = (city) => {
   );
 };
 
-const createTripFormTemplate = (event, isFavorite, newType, city, points, types, mode, price, externalData) => {
-  const {type, offers, startDate, endDate} = event;
+const createTripFormTemplate = (event, isFavorite, newType, city, points, types, mode, price, startDate, endDate, externalData) => {
+  const {type, offers} = event;
+  // console.log(startDate);
   const startTimeForm = formatTime(startDate, true);
   const endTimeForm = formatTime(endDate, true);
 
@@ -91,7 +92,7 @@ const createTripFormTemplate = (event, isFavorite, newType, city, points, types,
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price ? price : ``}">
+            <input class="event__input  event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${price}">
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">${saveButtonText}</button>
           <button class="event__reset-btn" type="reset">${mode !== Mode.ADDING ? `${deleteButtonText}` : `Cancel`}</button>
@@ -132,30 +133,33 @@ export default class TripForm extends AbstractSmartComponent {
     this._mode = mode;
     this._externalData = DefaultData;
 
+
     this._submitHandler = null;
-    this._FavoriteHandler = null;
-    this._ArrowHandler = null;
+    this._favoriteHandler = null;
+    this._arrowHandler = null;
     this._deleteButtonClickHandler = null;
 
 
     this._flatpickrStart = null;
     this._flatpickrEnd = null;
     this._applyFlatpickr();
+    this._subscribeOnEvents();
 
 
   }
 
   getTemplate() {
-    return createTripFormTemplate(this._event, this._isFavorite, this._type, this._city, this._points, this._types, this._mode, this._price, this._externalData);
+    return createTripFormTemplate(this._event, this._isFavorite, this._type, this._city, this._points, this._types, this._mode, this._price, this._startDate, this._endDate, this._externalData);
   }
 
   recoveryListeners() {
     this._subscribeOnEvents();
     this.setSubmitHandler(this._submitHandler);
-    this.setFavoritesButtonClickHandler(this._FavoriteHandler);
-    this.setArrowHandler(this._ArrowHandler);
+    this.setFavoritesButtonClickHandler(this._favoriteHandler);
+    this.setArrowHandler(this._arrowHandler);
     this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
   }
+
 
   setSubmitHandler(handler) {
     this.getElement().addEventListener(`submit`, handler);
@@ -163,10 +167,10 @@ export default class TripForm extends AbstractSmartComponent {
   }
 
   setFavoritesButtonClickHandler(handler) {
-    if (this._mode === Mode.EDIT) {
+    if (this._mode !== Mode.ADDING) {
       this.getElement().querySelector(`.event__favorite-btn`)
-        .addEventListener(`change`, handler);
-      this._FavoriteHandler = handler;
+       .addEventListener(`click`, handler);
+      this._favoriteHandler = handler;
     }
   }
 
@@ -174,18 +178,22 @@ export default class TripForm extends AbstractSmartComponent {
     if (this._mode !== Mode.ADDING) {
       this.getElement().querySelector(`.event__rollup-btn`)
         .addEventListener(`click`, handler);
-      this._ArrowHandler = handler;
+      this._arrowHandler = handler;
     }
   }
 
-  removeElement() {
+
+  removeFlatpickr() {
     if (this._flatpickrStart && this._flatpickrEnd) {
       this._flatpickrStart.destroy();
       this._flatpickrEnd.destroy();
       this._flatpickrStart = null;
       this._flatpickrEnd = null;
     }
+  }
 
+  removeElement() {
+    this.removeFlatpickr();
     super.removeElement();
   }
 
@@ -210,6 +218,16 @@ export default class TripForm extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
+
+    element.querySelector(`#event-start-time-1`).addEventListener(`change`, (evt) => {
+      this._startDate = flatpickr.parseDate(evt.target.value, `d/m/y H:i`);
+
+    });
+
+    element.querySelector(`#event-end-time-1`).addEventListener(`change`, (evt) => {
+      this._endDate = flatpickr.parseDate(evt.target.value, `d/m/y H:i`);
+    });
+
     element.querySelectorAll(`.event__type-input`).forEach((input) =>{
       input.addEventListener(`change`, (evt) => {
         this._type = evt.target.value;
@@ -240,11 +258,8 @@ export default class TripForm extends AbstractSmartComponent {
     if (!element.querySelector(`.event__input--destination`).value.length) {
       element.querySelector(`.event__input--destination`).setCustomValidity(`Please select a value.`);
     }
-
-    element.querySelector(`.event__input--price`).addEventListener(`input`, (evt) => {
-      evt.preventDefault();
-      this._price = passNumbersFromString(evt.target.value) > 0 ? passNumbersFromString(evt.target.value) : ``;
-      // this.rerender();
+    element.querySelector(`.event__input--price`).addEventListener(`change`, (evt) => {
+      this._price = passNumbersFromString(evt.target.value);
     });
   }
 
@@ -256,23 +271,27 @@ export default class TripForm extends AbstractSmartComponent {
       this._flatpickrEnd = null;
     }
 
-    const startDate = flatpickr((this.getElement().querySelector(`#event-start-time-1`)), {
+    const self = this;
+    this._flatpickrStart = flatpickr((this.getElement().querySelector(`#event-start-time-1`)), {
       dateFormat: `d/m/y H:i`,
       enableTime: true,
       defaultDate: this._event.startDate || `today`,
       minDate: this._event.startDate || `today`,
       onChange(selectedDates) {
-        endDate.set(`minDate`, selectedDates[0]);
+        if (self._flatpickrEnd.config._minDate < selectedDates[0]) {
+          self._flatpickrEnd.setDate(selectedDates[0], false, `d/m/y H:i`);
+        }
+        self._flatpickrEnd.set(`minDate`, selectedDates[0]);
       }
     });
 
-    const endDate = flatpickr((this.getElement().querySelector(`#event-end-time-1`)), {
+    this._flatpickrEnd = flatpickr((this.getElement().querySelector(`#event-end-time-1`)), {
       dateFormat: `d/m/y H:i`,
       enableTime: true,
       defaultDate: this._event.endDate || `today`,
       minDate: this._event.endDate || `today`,
       onChange(selectedDates) {
-        startDate.set(`maxDate`, selectedDates[0]);
+        self._flatpickrStart.set(`maxDate`, selectedDates[0]);
       },
     });
   }
@@ -284,11 +303,15 @@ export default class TripForm extends AbstractSmartComponent {
   }
 
   reset() {
-    const event = this._event;
+    // const event = this._event;
     this._type = this._event.type;
     this._city = this._event.destination.name;
     this._price = this._event.price;
-    this._isFavorite = !!event.isFavorite;
+    this._startDate = this._event.startDate;
+    this._endDate = this._event.endDate;
+    this._isFavorite = !!this._event.isFavorite;
+    // console.log(this._isFavorite);
+
     this.rerender();
   }
 }

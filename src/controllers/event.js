@@ -24,7 +24,8 @@ export const EmptyEvent = {
     photo: []
   },
   price: 0,
-  offers: []
+  offers: [],
+  isFavorite: false
 };
 
 const parseFormData = (formData, allOffers, allDestinations) => {
@@ -42,7 +43,7 @@ const parseFormData = (formData, allOffers, allDestinations) => {
   return new Point({
     "type": type,
     "destination": checkedDestination,
-    "base_price": Number(formData.get(`event-price`)),
+    "base_price": Math.abs(Number(formData.get(`event-price`))),
     "date_from": startDate,
     "date_to": endDate,
     "offers": checkedOffers,
@@ -69,7 +70,6 @@ export default class EventController {
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
     this._mode = mode;
-
     this._eventComponent = new EventComponent(event);
     this._eventEditComponent = new TripFormComponent(event, this._points, this._types, this._mode);
 
@@ -82,6 +82,7 @@ export default class EventController {
     this._eventEditComponent.setArrowHandler(() => {
       if (this._mode !== Mode.ADDING) {
         this._replaceEditToEvent();
+        // this._eventEditComponent.removeFlatpickr();
         document.removeEventListener(`keydown`, this._onEscKeyDown);
       } else {
         this._onDataChange(EmptyEvent, null);
@@ -105,6 +106,7 @@ export default class EventController {
         saveButtonText: `Saving...`
       });
       switchFormAvailability(this._eventEditComponent.getElement(), true);
+      this._eventEditComponent.removeFlatpickr();
       this._onDataChange(event, data);
     });
 
@@ -123,6 +125,7 @@ export default class EventController {
 
     switch (mode) {
       case Mode.DEFAULT:
+        this._eventEditComponent.removeFlatpickr();
         document.querySelector(`.trip-main__event-add-btn`).disabled = false;
         if (oldEventEditComponent && oldEventComponent) {
           replace(this._eventComponent, oldEventComponent);
@@ -138,7 +141,7 @@ export default class EventController {
           remove(oldEventComponent);
           remove(oldEventEditComponent);
         }
-        this._eventEditComponent._subscribeOnEvents();
+        // this._eventEditComponent._subscribeOnEvents();
         document.addEventListener(`keydown`, this._onEscKeyDown);
         render(this._container, this._eventEditComponent, RenderPosition.AFTERBEGIN);
         break;
@@ -147,7 +150,7 @@ export default class EventController {
   }
 
   setDefaultView() {
-    if (this._mode !== Mode.DEFAULT && this._mode !== Mode.ADDING) {
+    if (this._mode === Mode.EDIT) {
       this._replaceEditToEvent();
     } else {
       remove(this._eventEditComponent);
@@ -175,6 +178,7 @@ export default class EventController {
 
   _replaceEditToEvent() {
     this._eventEditComponent.reset();
+    this._eventEditComponent.removeFlatpickr();
     replace(this._eventComponent, this._eventEditComponent);
 
     if (document.contains(this._eventEditComponent.getElement())) {
@@ -188,6 +192,7 @@ export default class EventController {
     this._onViewChange();
     replace(this._eventEditComponent, this._eventComponent);
     this._mode = Mode.EDIT;
+    // console.log(this._mode);
     document.querySelector(`.trip-main__event-add-btn`).disabled = false;
   }
 

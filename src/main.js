@@ -13,7 +13,7 @@ import Store from "./api/store.js";
 import {render, RenderPosition, remove} from "./utils/render";
 import {FilterType, MenuItem} from "./const";
 
-const AUTHORIZATION = `Basic orezqAzWsXeDcRfVTgBYhNUjM=`;
+const AUTHORIZATION = `Basic orezoqAzWsXeDcRfVTgBYhNUjM=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `bigtrip-localstorage`;
 const STORE_VER = `v1`;

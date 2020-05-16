@@ -181,7 +181,7 @@ export default class TripController {
 
           if (isSuccess) {
             eventController.render(eventModel, EventControllerMode.DEFAULT);
-            // this._updateEvents();
+            this._updateEvents();
           }
         })
         .catch(() => {
