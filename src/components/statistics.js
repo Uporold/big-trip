@@ -24,14 +24,28 @@ const createStatsTemplate = () => {
   );
 };
 
+
+const typeSymbols = new Map([
+  [`taxi`, `🚕`],
+  [`bus`, `🚌`],
+  [`train`, `🚂`],
+  [`ship`, `🛳`],
+  [`transport`, `🚊`],
+  [`drive`, `🚗`],
+  [`flight`, `✈`],
+  [`check-in`, `🏨`],
+  [`sightseeing`, `🏛`],
+  [`restaurant`, `🍴`]
+]);
+
+
 const createChartTemplate = (ctx, data, formatter, title) => {
   return new Chart(ctx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      bullet: `https://www.amcharts.com/lib/images/faces/A04.png`,
       labels: data.map((it) => {
-        return it[0].toUpperCase();
+        return it[0].toUpperCase() + ` ` + typeSymbols.get(it[0]);
       }),
       datasets: [{
         data: data.map((it) => {

@@ -1,4 +1,4 @@
-import Point from "./models/point";
+import Point from "../models/point";
 
 const Method = {
   GET: `GET`,
@@ -15,16 +15,36 @@ const checkStatus = (response) => {
   }
 };
 
-const API = class {
+export default class API {
   constructor(authorization, endPoint) {
     this._authorization = authorization;
     this._endPoint = endPoint;
   }
 
-  getData(dataType) {
-    return this._load({url: dataType})
+  getEvents() {
+    return this._load({url: `points`})
       .then((response) => response.json())
-      .then(dataType === `points` ? Point.parseEvents : ``);
+      .then(Point.parseEvents);
+  }
+
+  getOffers() {
+    return this._load({url: `offers`})
+      .then((response) => response.json());
+  }
+
+  getDestinations() {
+    return this._load({url: `destinations`})
+      .then((response) => response.json());
+  }
+
+  sync(data) {
+    return this._load({
+      url: `points/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then((response) => response.json());
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
@@ -62,7 +82,5 @@ const API = class {
   deleteEvent(id) {
     return this._load({url: `points/${id}`, method: Method.DELETE});
   }
+}
 
-};
-
-export default API;

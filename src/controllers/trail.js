@@ -8,11 +8,9 @@ export default class TrailController {
   constructor(container, eventsModel) {
     this._container = container;
     this._eventsModel = eventsModel;
-
     this._trailComponent = null;
 
     this._onDataChange = this._onDataChange.bind(this);
-
     this._eventsModel.setDataChangeHandler(this._onDataChange);
   }
 
@@ -22,7 +20,6 @@ export default class TrailController {
     const events = this._eventsModel.getEventsAll().sort((a, b) => a.startDate - b.startDate);
     const trail = getTrail(events);
     const trailDates = getNoRepeatingDates(events);
-
 
     this._trailComponent = new TrailComponent(trail, trailDates);
 

@@ -1,7 +1,7 @@
-import {formatTime, formatTimeDiff} from "../utils/time";
-import {typeItemsActivity} from "../const";
 import AbstractComponent from "./abstract-component";
+import {formatTime, formatTimeDiff} from "../utils/time";
 import {capitalizeFirstLetter} from "../utils/common";
+import {typeItemsActivity} from "../const";
 
 const OFFERS_PREVIEW_LIMIT = 3;
 

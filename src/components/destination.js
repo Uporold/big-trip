@@ -1,4 +1,3 @@
-import {descriptions, photos} from "../const";
 import AbstractComponent from "./abstract-component";
 
 const createPhotosMarkup = (photo, description) => {
@@ -7,7 +6,7 @@ const createPhotosMarkup = (photo, description) => {
   );
 };
 
-const createTripFormEventDestinationTemplate = (description = descriptions, photo = photos) => {
+const createTripFormEventDestinationTemplate = (description, photo) => {
   const photosMarkup = photo.map((it) => createPhotosMarkup(it.src, it.description)).join(`\n`);
   return (
     `<section class="event__section  event__section--destination">
@@ -23,7 +22,7 @@ const createTripFormEventDestinationTemplate = (description = descriptions, phot
 };
 
 export default class Destination extends AbstractComponent {
-  constructor(description = descriptions, photo = photos) {
+  constructor(description, photo) {
     super();
     this._description = description;
     this._photo = photo;
