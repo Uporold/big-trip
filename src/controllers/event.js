@@ -47,7 +47,7 @@ const parseFormData = (formData, allOffers, allDestinations) => {
     "date_from": startDate,
     "date_to": endDate,
     "offers": checkedOffers,
-    "is_favorite": Boolean(formData.get(`event-favorite`)),
+    "is_favorite": Boolean(formData.get(`event-favorite`))
   });
 };
 
@@ -82,7 +82,6 @@ export default class EventController {
     this._eventEditComponent.setArrowHandler(() => {
       if (this._mode !== Mode.ADDING) {
         this._replaceEditToEvent();
-        // this._eventEditComponent.removeFlatpickr();
         document.removeEventListener(`keydown`, this._onEscKeyDown);
       } else {
         this._onDataChange(EmptyEvent, null);
@@ -90,11 +89,10 @@ export default class EventController {
       }
     });
 
-    this._eventEditComponent.setFavoritesButtonClickHandler(() => {
+    this._eventEditComponent.setFavoritesButtonClickHandler((isFavorite) => {
       const data = Point.clone(event);
-      data.isFavorite = !data.isFavorite;
-      this._onDataChange(event, data);
-
+      data.isFavorite = isFavorite;
+      this._onDataChange(event, data, true);
     });
 
     this._eventEditComponent.setSubmitHandler((evt, id) => {
@@ -141,7 +139,6 @@ export default class EventController {
           remove(oldEventComponent);
           remove(oldEventEditComponent);
         }
-        // this._eventEditComponent._subscribeOnEvents();
         document.addEventListener(`keydown`, this._onEscKeyDown);
         render(this._container, this._eventEditComponent, RenderPosition.AFTERBEGIN);
         break;
@@ -192,7 +189,6 @@ export default class EventController {
     this._onViewChange();
     replace(this._eventEditComponent, this._eventComponent);
     this._mode = Mode.EDIT;
-    // console.log(this._mode);
     document.querySelector(`.trip-main__event-add-btn`).disabled = false;
   }
 

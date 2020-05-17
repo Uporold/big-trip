@@ -15,7 +15,7 @@ const checkStatus = (response) => {
   }
 };
 
-const API = class {
+export default class API {
   constructor(authorization, endPoint) {
     this._authorization = authorization;
     this._endPoint = endPoint;
@@ -82,7 +82,5 @@ const API = class {
   deleteEvent(id) {
     return this._load({url: `points/${id}`, method: Method.DELETE});
   }
+}
 
-};
-
-export default API;

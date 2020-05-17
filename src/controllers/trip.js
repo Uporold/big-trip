@@ -1,10 +1,10 @@
-import {render} from "../utils/render";
-import {getNoRepeatingDates} from "../utils/time";
 import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event";
 import NoEventsComponent from "../components/no-events";
 import SortingComponent, {SortType} from "../components/trip-sorting";
 import TripDaysContainerComponent from "../components/days-container";
 import DaysItemComponent from "../components/days-item";
+import {render} from "../utils/render";
+import {getNoRepeatingDates} from "../utils/time";
 import {FilterType} from "../const";
 
 const HIDDEN_CLASS = `visually-hidden`;
@@ -62,30 +62,33 @@ export default class TripController {
   constructor(container, eventsModel, filterController, api) {
     this._container = container;
     this._eventsModel = eventsModel;
+    this._filterController = filterController;
+    this._api = api;
     this._showedEventControllers = [];
     this._noEventsComponent = new NoEventsComponent();
     this._sortingComponent = new SortingComponent();
     this._tripDaysContainer = new TripDaysContainerComponent();
     this._creatingEvent = null;
     this._sortType = SortType.EVENT;
+
     this._onDataChange = this._onDataChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._sortingComponent.setSortTypeChangeHandler(this._onSortTypeChange);
     this._onViewChange = this._onViewChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
     this._eventsModel.setFilterChangeHandler(this._onFilterChange);
-    this._filterController = filterController;
-    this._api = api;
   }
 
   hide() {
     this._container.classList.add(HIDDEN_CLASS);
     document.querySelector(`.trip-main__event-add-btn`).disabled = true;
+    this._filterController.disableAllFilters();
   }
 
   show() {
     this._container.classList.remove(HIDDEN_CLASS);
     document.querySelector(`.trip-main__event-add-btn`).disabled = false;
+    this._filterController.enableAllFilters();
   }
 
   render(points, types) {
@@ -144,13 +147,12 @@ export default class TripController {
     }
   }
 
-  _onDataChange(oldData, newData) {
+  _onDataChange(oldData, newData, isFavoriteUpdate = false) {
     const eventController = this._showedEventControllers.find((evt) => evt._eventComponent._event === oldData);
     if (oldData === EmptyEvent) {
       this._creatingEvent = null;
       if (newData === null) {
         eventController.destroy();
-        // this._updateEvents();
       } else {
         this._api.createEvent(newData)
           .then((eventModel) => {
@@ -180,6 +182,9 @@ export default class TripController {
           const isSuccess = this._eventsModel.updateEvent(oldData.id, eventModel);
 
           if (isSuccess) {
+            if (isFavoriteUpdate) {
+              return;
+            }
             eventController.render(eventModel, EventControllerMode.DEFAULT);
             this._updateEvents();
           }
@@ -188,9 +193,7 @@ export default class TripController {
           eventController.shake();
         });
     }
-    // this._updateEvents();
   }
-
 
   _onViewChange() {
     this._showedEventControllers.forEach((it) => it.setDefaultView());

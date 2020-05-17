@@ -52,6 +52,14 @@ export default class Sorting extends AbstractComponent {
     return createTripSortingTemplate();
   }
 
+  setActiveItem(menuItem) {
+    const item = this.getElement().querySelector(`#sort-${menuItem}`);
+    this._currenSortType = menuItem;
+    if (item) {
+      item.checked = true;
+    }
+  }
+
   setSortTypeChangeHandler(handler) {
     this.getElement().addEventListener(`click`, (evt) => {
 
@@ -72,13 +80,5 @@ export default class Sorting extends AbstractComponent {
 
       handler(this._currenSortType);
     });
-  }
-
-  setActiveItem(menuItem) {
-    const item = this.getElement().querySelector(`#sort-${menuItem}`);
-    this._currenSortType = menuItem;
-    if (item) {
-      item.checked = true;
-    }
   }
 }

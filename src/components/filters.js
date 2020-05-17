@@ -1,6 +1,5 @@
 import AbstractComponent from "./abstract-component";
 
-
 const FILTER_ID_PREFIX = `filter-`;
 
 const getFilterNameById = (id) => {
@@ -36,13 +35,6 @@ export default class Filters extends AbstractComponent {
     return createTripFiltersTemplate(this._filters);
   }
 
-  setFilterChangeHandler(handler) {
-    this.getElement().addEventListener(`click`, (evt) => {
-      const filterName = getFilterNameById(evt.target.id);
-      handler(filterName);
-    });
-  }
-
   setActiveItem(filter) {
     const item = this.getElement().querySelector(`#filter-${filter}`);
 
@@ -51,12 +43,19 @@ export default class Filters extends AbstractComponent {
     }
   }
 
-  disableItem(filter) {
+  switchFilterAvailability(filter, isDisabled, style) {
     const item = this.getElement().querySelector(`#filter-${filter}`);
 
     if (item) {
-      item.disabled = true;
-      this.getElement().querySelector(`#${filter}`).style = `pointer-events: none; cursor: default;`;
+      item.disabled = isDisabled;
+      this.getElement().querySelector(`#${filter}`).style = style;
     }
+  }
+
+  setFilterChangeHandler(handler) {
+    this.getElement().addEventListener(`click`, (evt) => {
+      const filterName = getFilterNameById(evt.target.id);
+      handler(filterName);
+    });
   }
 }

@@ -9,11 +9,9 @@ export const capitalizeFirstLetter = (string) => {
 export const switchFormAvailability = (form, disableFlag) => {
   const inputs = form.getElementsByTagName(`input`);
   const buttons = form.getElementsByTagName(`button`);
-  const selects = form.getElementsByTagName(`select`);
 
   changeStatus(inputs, disableFlag);
   changeStatus(buttons, disableFlag);
-  changeStatus(selects, disableFlag);
 };
 
 const changeStatus = (elements, disableFlag) => {

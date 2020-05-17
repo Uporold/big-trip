@@ -13,46 +13,40 @@ import Store from "./api/store.js";
 import {render, RenderPosition, remove} from "./utils/render";
 import {FilterType, MenuItem} from "./const";
 
-const AUTHORIZATION = `Basic orezoqAzWsXeDcRfVTgBYhNUjM=`;
+const AUTHORIZATION = `Basic orezoreqAzWsXeDcRfVTgBYhNUjM=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `bigtrip-localstorage`;
 const STORE_VER = `v1`;
 const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
+const tripMainElement = document.querySelector(`.trip-main`);
+const tripMainControlsElement = document.querySelector(`.trip-main__trip-controls`);
+const tripMainControlsHeader = tripMainControlsElement.querySelector(`.visually-hidden`);
+const tripEventsElement = document.querySelector(`.trip-events`);
+const pageBodyContainer = document.querySelector(`.page-main .page-body__container`);
+
 const api = new API(AUTHORIZATION, END_POINT);
 const store = new Store(STORE_NAME, window.localStorage);
 const apiWithProvider = new Provider(api, store);
-
-
 const eventsModel = new EventsModel();
+const tripControlsComponent = new TripControlsComponent();
+const filterController = new FilterController(tripMainControlsElement, eventsModel);
+const loadingComponent = new Loading();
+const trip = new TripController(tripEventsElement, eventsModel, filterController, apiWithProvider);
+const statisticsComponent = new StatisticsComponent(eventsModel);
 
-const tripMainElement = document.querySelector(`.trip-main`);
 const tripInfoContainer = new TripInfoContainer();
 render(tripMainElement, tripInfoContainer, RenderPosition.AFTERBEGIN);
 
 const tripMainInfoElement = document.querySelector(`.trip-main__trip-info`);
 const trailController = new TrailController(tripMainInfoElement, eventsModel);
-trailController.render();
-
-
 const totalPriceController = new TotalPriceController(tripMainInfoElement, eventsModel);
+trailController.render();
 totalPriceController.render();
 
-const tripMainControlsElement = document.querySelector(`.trip-main__trip-controls`);
-const tripMainControlsHeader = tripMainControlsElement.querySelector(`.visually-hidden`);
-const tripControlsComponent = new TripControlsComponent();
 render(tripMainControlsHeader, tripControlsComponent, RenderPosition.AFTEREND);
-
-const filterController = new FilterController(tripMainControlsElement, eventsModel);
 filterController.render();
-
-const tripEventsElement = document.querySelector(`.trip-events`);
-const loadingComponent = new Loading();
 render(tripEventsElement, loadingComponent);
-const trip = new TripController(tripEventsElement, eventsModel, filterController, apiWithProvider);
-
-const pageBodyContainer = document.querySelector(`.page-main .page-body__container`);
-const statisticsComponent = new StatisticsComponent(eventsModel);
 render(pageBodyContainer, statisticsComponent, RenderPosition.BEFOREEND);
 statisticsComponent.hide();
 
@@ -74,7 +68,6 @@ tripControlsComponent.setModeChangeHandler((menuItem) => {
 });
 
 document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
-  // filterController.setDefaultFilter();
   trip.createEvent();
 });
 
@@ -94,17 +87,11 @@ apiWithProvider.getEvents()
   });
 
 window.addEventListener(`load`, () => {
-  navigator.serviceWorker.register(`/sw.js`)
-    .then(() => {
-      // Действие, в случае успешной регистрации ServiceWorker
-    }).catch(() => {
-    // Действие, в случае ошибки при регистрации ServiceWorker
-    });
+  navigator.serviceWorker.register(`/sw.js`);
 });
 
 window.addEventListener(`online`, () => {
   document.title = document.title.replace(` [offline]`, ``);
-
   apiWithProvider.sync();
 });
 

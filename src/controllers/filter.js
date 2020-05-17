@@ -2,6 +2,8 @@ import FilterComponent from "../components/filters";
 import {FilterType} from "../const";
 import {render, replace} from "../utils/render";
 
+const disabledStyle = `pointer-events: none; cursor: default;`;
+
 export default class FilterController {
   constructor(container, eventsModel) {
     this._container = container;
@@ -31,7 +33,7 @@ export default class FilterController {
 
     Object.values(FilterType).map((filterType) => {
       if (!this._eventsModel.getEvents(filterType).length) {
-        this._filterComponent.disableItem(filterType);
+        this._filterComponent.switchFilterAvailability(filterType, true, disabledStyle);
       }
     });
 
@@ -40,6 +42,25 @@ export default class FilterController {
     } else {
       render(container, this._filterComponent);
     }
+  }
+
+  setDefaultFilter() {
+    this._eventsModel.setFilter(FilterType.EVERYTHING);
+    this._filterComponent.setActiveItem(FilterType.EVERYTHING);
+  }
+
+  disableAllFilters() {
+    Object.values(FilterType).map((filterType) => {
+      this._filterComponent.switchFilterAvailability(filterType, true, disabledStyle);
+    });
+  }
+
+  enableAllFilters() {
+    Object.values(FilterType).map((filterType) => {
+      if (this._eventsModel.getEvents(filterType).length) {
+        this._filterComponent.switchFilterAvailability(filterType, false, ``);
+      }
+    });
   }
 
   _onFilterChange(filterType) {
@@ -61,12 +82,6 @@ export default class FilterController {
         }
         break;
     }
-  }
-
-
-  setDefaultFilter() {
-    this._eventsModel.setFilter(FilterType.EVERYTHING);
-    this._filterComponent.setActiveItem(FilterType.EVERYTHING);
   }
 
   _onDataChange() {
