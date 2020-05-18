@@ -7,7 +7,7 @@ import TripController from "./controllers/trip-controller";
 import EventsModel from "./models/events";
 import StatisticsComponent from "./components/statistics";
 import Loading from "./components/loading";
-import API from "./api/index.js";
+import API from "./api/api.js";
 import Provider from "./api/provider.js";
 import Store from "./api/store.js";
 import {render, RenderPosition, remove} from "./utils/render";
