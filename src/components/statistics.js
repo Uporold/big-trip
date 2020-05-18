@@ -4,6 +4,8 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {typeItemsActivity} from "../const";
 import {formatTimeDiff} from "../utils/time";
 
+const BAR_HEIGHT = 55;
+
 const createStatsTemplate = () => {
   return (
     `<section class="statistics">
@@ -141,11 +143,9 @@ export default class Statistics extends AbstractSmartComponent {
     const moneyCtx = element.querySelector(`.statistics__chart--money`);
     const transportCtx = element.querySelector(`.statistics__chart--transport`);
     const timeSpendCtx = element.querySelector(`.statistics__chart--time`);
-
-    const BAR_HEIGHT = 55;
-    moneyCtx.height = BAR_HEIGHT * 8;
-    transportCtx.height = BAR_HEIGHT * 8;
-    timeSpendCtx.height = BAR_HEIGHT * 8;
+    moneyCtx.height = BAR_HEIGHT * this._getMoneyTotal().length;
+    transportCtx.height = BAR_HEIGHT * this._getTransportTotal().length;
+    timeSpendCtx.height = BAR_HEIGHT * this._getTimeTotal().length;
 
     moneyChart(moneyCtx, this._getMoneyTotal());
     transportChart(transportCtx, this._getTransportTotal());

@@ -6,7 +6,7 @@ const createTripDaysContainerTemplate = () => {
   );
 };
 
-export default class TripDaysContainer extends AbstractComponent {
+export default class DaysContainer extends AbstractComponent {
   getTemplate() {
     return createTripDaysContainerTemplate();
   }

@@ -1,4 +1,5 @@
-import Point from "../models/point";
+import Event from "../models/event";
+import {URL} from "../const";
 
 const Method = {
   GET: `GET`,
@@ -7,8 +8,13 @@ const Method = {
   DELETE: `DELETE`
 };
 
+const Code = {
+  SUCCESS: 200,
+  REDIRECTION: 300
+};
+
 const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
+  if (response.status >= Code.SUCCESS && response.status < Code.REDIRECTION) {
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);
@@ -22,24 +28,24 @@ export default class API {
   }
 
   getEvents() {
-    return this._load({url: `points`})
+    return this._load({url: URL.POINTS})
       .then((response) => response.json())
-      .then(Point.parseEvents);
+      .then(Event.parseEvents);
   }
 
   getOffers() {
-    return this._load({url: `offers`})
+    return this._load({url: URL.OFFERS})
       .then((response) => response.json());
   }
 
   getDestinations() {
-    return this._load({url: `destinations`})
+    return this._load({url: URL.DESTINATIONS})
       .then((response) => response.json());
   }
 
   sync(data) {
     return this._load({
-      url: `points/sync`,
+      url: `${URL.POINTS}/sync`,
       method: Method.POST,
       body: JSON.stringify(data),
       headers: new Headers({"Content-Type": `application/json`})
@@ -59,28 +65,28 @@ export default class API {
 
   updateEvent(id, data) {
     return this._load({
-      url: `points/${id}`,
+      url: `${URL.POINTS}/${id}`,
       method: Method.PUT,
       body: JSON.stringify(data.toRAW()),
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then((response) => response.json())
-      .then(Point.parseEvent);
+      .then(Event.parseEvent);
   }
 
   createEvent(event) {
     return this._load({
-      url: `points`,
+      url: URL.POINTS,
       method: Method.POST,
       body: JSON.stringify(event.toRAW()),
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then((response) => response.json())
-      .then(Point.parseEvent);
+      .then(Event.parseEvent);
   }
 
   deleteEvent(id) {
-    return this._load({url: `points/${id}`, method: Method.DELETE});
+    return this._load({url: `${URL.POINTS}/${id}`, method: Method.DELETE});
   }
 }
 

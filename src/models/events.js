@@ -12,8 +12,8 @@ export default class Events {
     this._filterChangeHandlers = [];
   }
 
-  getEvents(ft = this._activeFilterType) {
-    return getEventsByFilter(this._events, ft);
+  getEvents(filterType = this._activeFilterType) {
+    return getEventsByFilter(this._events, filterType);
   }
 
   getEventsAll() {

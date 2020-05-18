@@ -1,18 +1,21 @@
 import EventComponent from "../components/event";
-import TripFormComponent from "../components/form";
+import TripFormComponent from "../components/edit-form";
+import Event from "../models/event";
 import {render, replace, remove} from "../utils/render";
 import {RenderPosition} from "../utils/render";
-import Point from "../models/point";
-import flatpickr from "flatpickr";
+import {ProcessingButtonData, DefaultButtonData, EventKey} from "../const";
 import {switchFormAvailability} from "../utils/common";
+import flatpickr from "flatpickr";
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
+const SHAKE_STYLE = `box-shadow: 0px 0px 15px 0px rgba(245,32,32,1);`;
 
 export const Mode = {
   ADDING: `adding`,
   DEFAULT: `default`,
   EDIT: `edit`,
 };
+
 
 export const EmptyEvent = {
   startDate: flatpickr.parseDate(new Date(), `d/m/y H:i`),
@@ -40,7 +43,7 @@ const parseFormData = (formData, allOffers, allDestinations) => {
   const city = formData.get(`event-destination`);
   const checkedDestination = allDestinations.find((it)=> it.name === city);
 
-  return new Point({
+  return new Event({
     "type": type,
     "destination": checkedDestination,
     "base_price": Math.abs(Number(formData.get(`event-price`))),
@@ -59,6 +62,7 @@ export default class EventController {
     this._points = points;
     this._types = types;
     this._mode = Mode.DEFAULT;
+    this._createButton = document.querySelector(`.trip-main__event-add-btn`);
 
     this._eventComponent = null;
     this._eventEditComponent = null;
@@ -90,7 +94,7 @@ export default class EventController {
     });
 
     this._eventEditComponent.setFavoritesButtonClickHandler((isFavorite) => {
-      const data = Point.clone(event);
+      const data = Event.clone(event);
       data.isFavorite = isFavorite;
       this._onDataChange(event, data, true);
     });
@@ -101,7 +105,7 @@ export default class EventController {
       const data = parseFormData(formData, this._types, this._points);
       data.id = id || new Date().valueOf().toString();
       this._eventEditComponent.setData({
-        saveButtonText: `Saving...`
+        SAVE_BUTTON_TEXT: ProcessingButtonData.SAVE_BUTTON_TEXT
       });
       switchFormAvailability(this._eventEditComponent.getElement(), true);
       this._eventEditComponent.removeFlatpickr();
@@ -111,12 +115,12 @@ export default class EventController {
     this._eventEditComponent.setDeleteButtonClickHandler(() => {
       if (this._mode !== Mode.ADDING) {
         this._eventEditComponent.setData({
-          deleteButtonText: `Deleting...`,
+          DELETE_BUTTON_TEXT: ProcessingButtonData.DELETE_BUTTON_TEXT,
         });
         switchFormAvailability(this._eventEditComponent.getElement(), true);
         this._onDataChange(event, null);
       } else {
-        document.querySelector(`.trip-main__event-add-btn`).disabled = false;
+        this._createButton.disabled = false;
         this._onDataChange(EmptyEvent, null);
       }
     });
@@ -124,7 +128,7 @@ export default class EventController {
     switch (mode) {
       case Mode.DEFAULT:
         this._eventEditComponent.removeFlatpickr();
-        document.querySelector(`.trip-main__event-add-btn`).disabled = false;
+        this._createButton.disabled = false;
         if (oldEventEditComponent && oldEventComponent) {
           replace(this._eventComponent, oldEventComponent);
           replace(this._eventEditComponent, oldEventEditComponent);
@@ -134,7 +138,7 @@ export default class EventController {
         }
         break;
       case Mode.ADDING:
-        document.querySelector(`.trip-main__event-add-btn`).disabled = true;
+        this._createButton.disabled = true;
         if (oldEventEditComponent && oldEventComponent) {
           remove(oldEventComponent);
           remove(oldEventEditComponent);
@@ -161,22 +165,18 @@ export default class EventController {
   }
 
   shake() {
-    this._eventEditComponent.getElement().style = `box-shadow: 0px 0px 15px 0px rgba(245,32,32,1);`;
+    this._eventEditComponent.getElement().style = SHAKE_STYLE;
     this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
     setTimeout(() => {
       this._eventEditComponent.getElement().style = ``;
       this._eventEditComponent.getElement().style.animation = ``;
-      this._eventEditComponent.setData({
-        saveButtonText: `Save`,
-        deleteButtonText: `Delete`,
-      });
+      this._eventEditComponent.setData(DefaultButtonData);
     }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   _replaceEditToEvent() {
     this._eventEditComponent.reset();
     this._eventEditComponent.removeFlatpickr();
-    replace(this._eventComponent, this._eventEditComponent);
 
     if (document.contains(this._eventEditComponent.getElement())) {
       replace(this._eventComponent, this._eventEditComponent);
@@ -189,14 +189,14 @@ export default class EventController {
     this._onViewChange();
     replace(this._eventEditComponent, this._eventComponent);
     this._mode = Mode.EDIT;
-    document.querySelector(`.trip-main__event-add-btn`).disabled = false;
+    this._createButton.disabled = false;
   }
 
   _onEscKeyDown(evt) {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+    const isEscKey = evt.key === EventKey.ENTER_KEY || evt.key === EventKey.ESC_KEY;
 
     if (isEscKey) {
-      document.querySelector(`.trip-main__event-add-btn`).disabled = false;
+      this._createButton.disabled = false;
       if (this._mode === Mode.ADDING) {
         this._onDataChange(EmptyEvent, null);
       }

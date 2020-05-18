@@ -1,5 +1,8 @@
-import Point from "../models/point";
+import Event from "../models/event";
 import {nanoid} from "nanoid";
+import {URL} from "../const";
+
+const SYNC_ERROR = `Sync data failed`;
 
 const isOnline = () => {
   return window.navigator.onLine;
@@ -38,33 +41,33 @@ export default class Provider {
 
     const storeItems = Object.values(this._store.getItems());
 
-    return Promise.resolve(Point.parseEvents(storeItems));
+    return Promise.resolve(Event.parseEvents(storeItems));
   }
 
   getOffers() {
     if (isOnline()) {
       return this._api.getOffers()
         .then((offers) => {
-          this._store.setOffers(offers, `offers`);
+          this._store.setOffers(offers, URL.OFFERS);
 
           return offers;
         });
     }
 
-    return Promise.resolve(this._store.getItems(`offers`));
+    return Promise.resolve(this._store.getItems(URL.OFFERS));
   }
 
   getDestinations() {
     if (isOnline()) {
       return this._api.getDestinations()
         .then((destinations) => {
-          this._store.setDestinations(destinations, `destinations`);
+          this._store.setDestinations(destinations, URL.DESTINATIONS);
 
           return destinations;
         });
     }
 
-    return Promise.resolve(this._store.getItems(`destinations`));
+    return Promise.resolve(this._store.getItems(URL.DESTINATIONS));
   }
 
   createEvent(event) {
@@ -77,7 +80,7 @@ export default class Provider {
         });
     }
     const localNewEventId = nanoid();
-    const localNewEvent = Point.clone(Object.assign(event, {id: localNewEventId}));
+    const localNewEvent = Event.clone(Object.assign(event, {id: localNewEventId}));
 
     this._store.setItem(localNewEvent.id, localNewEvent.toRAW());
 
@@ -93,7 +96,7 @@ export default class Provider {
       return updatedEvent;
     });
     }
-    const localItem = Point.clone(Object.assign(event, {id}));
+    const localItem = Event.clone(Object.assign(event, {id}));
 
     this._store.setItem(id, localItem.toRAW());
 
@@ -117,18 +120,15 @@ export default class Provider {
 
       return this._api.sync(storeEvents)
         .then((response) => {
-          // Забираем из ответа синхронизированные задачи
           const createdEvents = getSyncedEvents(response.created);
           const updatedEvents = getSyncedEvents(response.updated);
 
-          // Добавляем синхронизированные задачи в хранилище.
-          // Хранилище должно быть актуальным в любой момент.
           const items = createStoreStructure([...createdEvents, ...updatedEvents]);
 
           this._store.setItems(items);
         });
     }
 
-    return Promise.reject(new Error(`Sync data failed`));
+    return Promise.reject(new Error(SYNC_ERROR));
   }
 }

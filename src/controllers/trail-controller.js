@@ -1,5 +1,5 @@
 import {render, replace} from "../utils/render";
-import TrailComponent from "../components/trip-info";
+import TrailComponent from "../components/trail";
 import {getTrail} from "../utils/trail-info";
 import {getNoRepeatingDates} from "../utils/time";
 import {RenderPosition} from "../utils/render";

@@ -1,6 +1,6 @@
-import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event";
+import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event-controller";
 import NoEventsComponent from "../components/no-events";
-import SortingComponent, {SortType} from "../components/trip-sorting";
+import SortingComponent, {SortType} from "../components/sorting";
 import TripDaysContainerComponent from "../components/days-container";
 import DaysItemComponent from "../components/days-item";
 import {render} from "../utils/render";
@@ -8,6 +8,7 @@ import {getNoRepeatingDates} from "../utils/time";
 import {FilterType} from "../const";
 
 const HIDDEN_CLASS = `visually-hidden`;
+
 const getSortedEvents = (events, sortType) => {
   const showingEvents = events.slice();
 
@@ -46,10 +47,10 @@ const renderEvents = (events, container, onDataChange, onViewChange, points, typ
 const renderDefaultEvents = (events, trailDates, container, onDataChange, onViewChange, points, types) => {
   const tripEventsList = getDaysContainer(container, trailDates);
   let controllers = [];
-  for (let j = 0; j < tripEventsList.length; j++) {
-    const dayEvents = events.filter((event) => event.startDate.getDate() === trailDates[j].day);
-    controllers = [...controllers, ...renderEvents(dayEvents, tripEventsList[j], onDataChange, onViewChange, points, types)];
-  }
+  tripEventsList.forEach((tripEventsListElement, index) => {
+    const dayEvents = events.filter((event) => event.startDate.getDate() === trailDates[index].day);
+    controllers = [...controllers, ...renderEvents(dayEvents, tripEventsListElement, onDataChange, onViewChange, points, types)];
+  });
   return controllers;
 };
 
@@ -70,6 +71,7 @@ export default class TripController {
     this._tripDaysContainer = new TripDaysContainerComponent();
     this._creatingEvent = null;
     this._sortType = SortType.EVENT;
+    this._createButton = document.querySelector(`.trip-main__event-add-btn`);
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
@@ -81,13 +83,13 @@ export default class TripController {
 
   hide() {
     this._container.classList.add(HIDDEN_CLASS);
-    document.querySelector(`.trip-main__event-add-btn`).disabled = true;
+    this._createButton.disabled = true;
     this._filterController.disableAllFilters();
   }
 
   show() {
     this._container.classList.remove(HIDDEN_CLASS);
-    document.querySelector(`.trip-main__event-add-btn`).disabled = false;
+    this._createButton.disabled = false;
     this._filterController.enableAllFilters();
   }
 
@@ -138,7 +140,7 @@ export default class TripController {
     const sortedEvents = getSortedEvents(this._eventsModel.getEvents(), sortType);
     const tripDaysElement = this._tripDaysContainer.getElement();
     this._showedEventControllers = renderDefaultEvents(this._eventsModel.getEvents(), trailDates, tripDaysElement, this._onDataChange, this._onViewChange, this._points, this._types);
-    if (sortType !== `event`) {
+    if (sortType !== SortType.EVENT) {
       this._sortType = sortType;
       this._showedEventControllers = renderSortedEvents(sortedEvents, tripDaysElement, this._onDataChange, this._onViewChange, this._points, this._types);
     } else {

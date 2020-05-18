@@ -3,15 +3,12 @@ import Destination from "./destination";
 import Offers from "./offers";
 import {passNumbersFromString, capitalizeFirstLetter} from "../utils/common";
 import {formatTime} from "../utils/time";
-import {Mode} from "../controllers/event";
-import {typeItemsActivity, typeItemsTransfer} from "../const";
+import {Mode} from "../controllers/event-controller";
+import {typeItemsActivity, typeItemsTransfer, DefaultButtonData} from "../const";
+import {DestinationValidationMessage} from "../const";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 
-const DefaultData = {
-  deleteButtonText: `Delete`,
-  saveButtonText: `Save`,
-};
 
 const createTypeMarkup = (type, eventType) => {
   return (
@@ -33,8 +30,8 @@ const createTripFormTemplate = (event, isFavorite, newType, city, points, types,
   const startTimeForm = formatTime(startDate, true);
   const endTimeForm = formatTime(endDate, true);
 
-  const deleteButtonText = externalData.deleteButtonText;
-  const saveButtonText = externalData.saveButtonText;
+  const deleteButtonText = externalData.DELETE_BUTTON_TEXT;
+  const saveButtonText = externalData.SAVE_BUTTON_TEXT;
 
   const typeOffersNew = types.find((it) => it.type === newType).offers;
   const isTypeActivity = typeItemsActivity.some((it) => newType === it.toLowerCase()) ? `in` : `to`;
@@ -116,7 +113,7 @@ const createTripFormTemplate = (event, isFavorite, newType, city, points, types,
   );
 };
 
-export default class TripForm extends AbstractSmartComponent {
+export default class EditForm extends AbstractSmartComponent {
   constructor(event, points, types, mode) {
     super();
 
@@ -130,7 +127,7 @@ export default class TripForm extends AbstractSmartComponent {
     this._points = points;
     this._types = types;
     this._mode = mode;
-    this._externalData = DefaultData;
+    this._externalData = DefaultButtonData;
 
 
     this._submitHandler = null;
@@ -152,7 +149,7 @@ export default class TripForm extends AbstractSmartComponent {
   }
 
   setData(data) {
-    this._externalData = Object.assign({}, DefaultData, data);
+    this._externalData = Object.assign({}, DefaultButtonData, data);
     this.rerender();
   }
 
@@ -233,6 +230,7 @@ export default class TripForm extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
+    const destinationInputElement = element.querySelector(`.event__input--destination`);
 
     element.querySelector(`#event-start-time-1`).addEventListener(`change`, (evt) => {
       this._startDate = flatpickr.parseDate(evt.target.value, `d/m/y H:i`);
@@ -250,9 +248,9 @@ export default class TripForm extends AbstractSmartComponent {
       });
     });
 
-    element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
+    destinationInputElement.addEventListener(`change`, (evt) => {
       let optionFound = false;
-      const datalist = element.querySelector(`.event__input--destination`).list;
+      const datalist = destinationInputElement.list;
 
       for (let j = 0; j < datalist.options.length; j++) {
         if (evt.target.value === datalist.options[j].value && evt.target.value) {
@@ -261,17 +259,18 @@ export default class TripForm extends AbstractSmartComponent {
         }
       }
       if (optionFound) {
-        element.querySelector(`.event__input--destination`).setCustomValidity(``);
+        destinationInputElement.setCustomValidity(``);
         this._city = evt.target.value;
         this.rerender();
       } else {
-        element.querySelector(`.event__input--destination`).setCustomValidity(`Please select a valid value.`);
+        destinationInputElement.setCustomValidity(DestinationValidationMessage.WRONG);
       }
     });
 
-    if (!element.querySelector(`.event__input--destination`).value.length) {
-      element.querySelector(`.event__input--destination`).setCustomValidity(`Please select a value.`);
+    if (!destinationInputElement.value.length) {
+      destinationInputElement.setCustomValidity(DestinationValidationMessage.EMPTY);
     }
+
     element.querySelector(`.event__input--price`).addEventListener(`change`, (evt) => {
       this._price = passNumbersFromString(evt.target.value);
     });

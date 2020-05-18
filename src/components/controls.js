@@ -9,7 +9,7 @@ const createTripControlsNavTemplate = () => {
   );
 };
 
-export default class TripControls extends AbstractComponent {
+export default class Controls extends AbstractComponent {
   getTemplate() {
     return createTripControlsNavTemplate();
   }

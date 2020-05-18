@@ -1,10 +1,10 @@
-import TotalPriceController from "./controllers/total-price";
-import TrailController from "./controllers/trail";
+import TotalPriceController from "./controllers/total-price-controller";
+import TrailController from "./controllers/trail-controller";
 import TripControlsComponent from "./components/controls";
-import FilterController from "./controllers/filter";
+import FilterController from "./controllers/filter-controller";
 import TripInfoContainer from "./components/trip-info-container";
-import TripController from "./controllers/trip";
-import EventsModel from "./models/points";
+import TripController from "./controllers/trip-controller";
+import EventsModel from "./models/events";
 import StatisticsComponent from "./components/statistics";
 import Loading from "./components/loading";
 import API from "./api/index.js";
@@ -13,7 +13,7 @@ import Store from "./api/store.js";
 import {render, RenderPosition, remove} from "./utils/render";
 import {FilterType, MenuItem} from "./const";
 
-const AUTHORIZATION = `Basic orezoreqAzWsXeDcRfVTgBYhNUjM=`;
+const AUTHORIZATION = `Basic orezoreyqAzWsXeDcRfVTgBYhNUjM=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `bigtrip-localstorage`;
 const STORE_VER = `v1`;
