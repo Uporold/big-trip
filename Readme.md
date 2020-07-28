@@ -10,4 +10,4 @@
 интерфейс не даст повода отвлечься и сфокусирует внимание на планировании путешествия.
 
 ---
-* [Демо](https://uporold.github.io/cinemaddict/)
+* [Демо](https://uporold.github.io/big-trip/)
