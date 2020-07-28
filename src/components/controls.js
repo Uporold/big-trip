@@ -16,7 +16,12 @@ export default class Controls extends AbstractComponent {
 
   setModeChangeHandler(handler) {
     this.getElement().addEventListener(`click`, (evt) => {
-      if (!evt.target.classList.contains(`trip-tabs__btn`)) {
+      evt.preventDefault();
+      if (evt.target.tagName !== `A`) {
+        return;
+      }
+
+      if (evt.target.classList.contains(`trip-tabs__btn--active`)) {
         return;
       }
 

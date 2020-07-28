@@ -1,4 +1,4 @@
-import AbstractSmartComponent from "./abstact-smart-component";
+import AbstractSmartComponent from "./abstract-smart-component";
 import Destination from "./destination";
 import Offers from "./offers";
 import {passNumbersFromString, capitalizeFirstLetter} from "../utils/common";
@@ -65,7 +65,7 @@ const createTripFormTemplate = (event, isFavorite, newType, city, points, types,
           </div>
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${newType ? capitalizeFirstLetter(newType) : `Bus to`} ${isTypeActivity}
+                ${newType ? capitalizeFirstLetter(newType) : `Bus to`} ${isTypeActivity}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city ? city : ``}" list="destination-list-1">
             <datalist id="destination-list-1">

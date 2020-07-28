@@ -13,7 +13,7 @@ import Store from "./api/store.js";
 import {render, RenderPosition, remove} from "./utils/render";
 import {FilterType, MenuItem} from "./const";
 
-const AUTHORIZATION = `Basic orezoreyqAzWsXeDcRfVTgBYhNUjM=`;
+const AUTHORIZATION = `Basic FgfrddEdsAzWsXeDcRfVTgBYhNUjM=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `bigtrip-localstorage`;
 const STORE_VER = `v1`;
@@ -43,6 +43,7 @@ const trailController = new TrailController(tripMainInfoElement, eventsModel);
 const totalPriceController = new TotalPriceController(tripMainInfoElement, eventsModel);
 trailController.render();
 totalPriceController.render();
+
 
 render(tripMainControlsHeader, tripControlsComponent, RenderPosition.AFTEREND);
 filterController.render();
@@ -85,7 +86,6 @@ apiWithProvider.getEvents()
           });
       });
   });
-
 window.addEventListener(`load`, () => {
   navigator.serviceWorker.register(`/sw.js`);
 });

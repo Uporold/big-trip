@@ -6,7 +6,7 @@ export default class Event {
     this.price = data[`base_price`];
     this.startDate = new Date(data[`date_from`]);
     this.endDate = new Date(data[`date_to`]);
-    this.offers = data[`offers`];
+    this.offers = data.offers;
     this.isFavorite = Boolean(data[`is_favorite`]);
   }
 

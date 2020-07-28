@@ -1,4 +1,4 @@
-import AbstractSmartComponent from "./abstact-smart-component";
+import AbstractSmartComponent from "./abstract-smart-component";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {typeItemsActivity} from "../const";
