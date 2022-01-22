@@ -27,6 +27,6 @@
     "flatpickr": "4.6.3",
     "moment": "2.24.0",
     "moment-locales-webpack-plugin": "1.2.0",
-    "nanoid": "3.1.7"
+    "nanoid": "3.1.31"
   }
 }
